@@ -43,7 +43,7 @@ const SearchInput = () => {
           render={({ field }) => (
             <FormItem>
               <FormControl>
-                <Input placeholder="Search..." {...field} className="pr-10" />
+                <Input placeholder="Search..." {...field} className="md:pr-10" />
               </FormControl>
             </FormItem>
           )}
@@ -51,7 +51,7 @@ const SearchInput = () => {
         <Button
           type="submit"
           variant="ghost"
-          className="absolute right-0 top-0 w-5"
+          className="hidden md:inline-flex absolute right-0 top-0 w-5"
         >
           <FontAwesomeIcon icon={faMagnifyingGlass} />
         </Button>

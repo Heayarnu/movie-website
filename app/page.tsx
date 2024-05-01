@@ -1,9 +1,31 @@
-import Image from 'next/image';
+import CarouselBannerWrapper from '@/components/CarouselBannerWrapper';
+import MoviesCarousel from '@/components/MoviesCarousel';
+import {
+  getPopularMovies,
+  getTopRatedMovies,
+  getUpcomingMovies,
+} from '@/utils';
 
-export default function Home() {
+export default async function Home() {
+  const upComingMovies = await getUpcomingMovies();
+  const topRatedMovies = await getTopRatedMovies();
+  const popularMovies = await getPopularMovies();
+
   return (
     <main className="">
-      <h1>Let&apos;s build Disney</h1>
+      {/* CarouselBannerWrapper */}
+      <CarouselBannerWrapper />
+
+      <div className="flex flex-col space-y-2">
+        {/* upcoming movies */}
+        <MoviesCarousel movies={upComingMovies} title="Upcoming" />
+
+        {/* toprated movies */}
+        <MoviesCarousel movies={topRatedMovies} title="Top Rated" />
+
+        {/* popular movies */}
+        <MoviesCarousel movies={popularMovies} title="Popular" />
+      </div>
     </main>
   );
 }
