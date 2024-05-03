@@ -11,7 +11,6 @@ async function SearchPage({ params: { term } }: SearchProps) {
 
   const movies = await getSearchMovies(termToUse);
   const popularMovies = await getPopularMovies();
-  console.log(movies);
 
   return (
     <div className="max-w-7xl mx-auto">

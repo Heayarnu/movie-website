@@ -1,5 +1,4 @@
 import { Genres, SearchResults } from '@/types';
-import next from 'next';
 
 export async function fetchMovies() {
   const url = 'https://api.themoviedb.org/3/genre/movie/list?language=en';
@@ -76,6 +75,13 @@ export async function getDiscoverMovies(id?: string, keywords?: string) {
 
   keywords && url.searchParams.set('with_keywords', keywords);
   id && url.searchParams.set('with_genres', id);
+
+  const data = await fecthFromTMDB(url);
+  return data.results;
+}
+
+export async function NowPlaying() {
+  const url = new URL('https://api.themoviedb.org/3/movie/now_playing');
 
   const data = await fecthFromTMDB(url);
   return data.results;
