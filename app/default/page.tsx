@@ -1,11 +1,11 @@
 import CarouselBannerWrapper from '@/components/CarouselBannerWrapper';
 import MoviesCarousel from '@/components/MoviesCarousel';
+import Header from '@/components/Header';
 import {
   getPopularMovies,
   getTopRatedMovies,
   getUpcomingMovies,
 } from '@/utils';
-import Header from './Header';
 
 export default async function HomeScreen() {
   const upComingMovies = await getUpcomingMovies();

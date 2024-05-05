@@ -25,6 +25,18 @@ export interface MovieCardProps {
   isVertical?: boolean;
 }
 
+export interface HomeScreenRowsProps {
+  h1: string;
+  h2: string;
+  imageSrc: string;
+  isReversed?: boolean;
+}
+
+export interface DisclosuresProps {
+  title: string;
+  children: string;
+}
+
 export interface CarouselBannerProps {
   id?: string;
   keywords?: string;

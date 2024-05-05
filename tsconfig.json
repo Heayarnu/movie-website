@@ -21,6 +21,15 @@
       "@/*": ["./*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    "Redux/reduxProvider.jsx",
+    "Redux/emailReducer.tsx",
+    "Redux/store.tsx",
+    "app/SignUp/page.tsx"
+  ],
   "exclude": ["node_modules"]
 }

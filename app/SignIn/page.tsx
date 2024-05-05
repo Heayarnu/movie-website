@@ -5,7 +5,6 @@ import { Button } from '@/components/ui/button';
 import {
   Card,
   CardContent,
-  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
@@ -13,9 +12,18 @@ import {
 import { Input } from '@/components/ui/input';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
+import { useRef } from 'react';
+
+import { useAppDispatch, useAppSelector } from '@/Redux/hooks';
+import { setEmail } from '@/Redux/emailReducer';
 
 const Page = () => {
   const router = useRouter();
+  const dispatch = useAppDispatch();
+
+  const email = useAppSelector((state) => state.email.value);
+
+  const passwordRef = useRef<HTMLInputElement>(null);
 
   return (
     <div className="flex flex-col">
@@ -46,19 +54,21 @@ const Page = () => {
               </CardHeader>
               <CardContent>
                 <Input
+                  value={email}
+                  onChange={(e) => dispatch(setEmail(e.target.value))}
                   className="my-4 rounded h-16 bg-gray-200/10 border-white text-lg"
                   placeholder="Email or mobile number"
                 />
 
                 <Input
+                  ref={passwordRef}
                   className="my-4 rounded h-16 f bg-gray-200/10 border-white text-lg"
                   placeholder="Password"
                 />
 
                 <Button
                   type="submit"
-                  className="bg-[#CC0000] hover:bg-[#990000] text-white h-10 w-full mt-2 
-                  text-lg font-bold"
+                  className="bg-[#CC0000] hover:bg-[#990000] text-white h-10 w-full mt-2 text-lg font-bold"
                 >
                   Sign in
                 </Button>

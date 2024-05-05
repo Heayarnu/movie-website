@@ -4,6 +4,7 @@ import Footer from '@/components/Footer';
 import { ThemeProvider } from '@/components/ThemeProvider';
 import '@fortawesome/fontawesome-svg-core/styles.css';
 import { config } from '@fortawesome/fontawesome-svg-core';
+import ReduxProvider from '@/Redux/reduxProvider';
 config.autoAddCss = false;
 
 export const metadata: Metadata = {
@@ -25,7 +26,7 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          {children}
+          <ReduxProvider>{children}</ReduxProvider>
 
           <Footer />
         </ThemeProvider>

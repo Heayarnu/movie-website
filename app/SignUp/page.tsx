@@ -5,10 +5,16 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import React, { use } from 'react';
+import React, {  useRef } from 'react';
+import { useAppSelector } from '@/Redux/hooks';
 
 const Page = () => {
   const router = useRouter();
+
+  const email = useAppSelector((state) => state.email.value);
+
+  const passwordRef = useRef<HTMLInputElement>(null);
+
 
   return (
     <div className="bg-white h-screen">
@@ -44,10 +50,11 @@ const Page = () => {
 
             <p className="text-black/70 text-lg font-medium mt-6">Email</p>
 
-            <p className="text-black text-lg font-medium -mt-2">gab@gmailcom</p>
+            <p className="text-black text-lg font-medium -mt-2">{email}</p>
 
             <Input
               className=" my-4 rounded h-16 bg-transparent text-base border-gray-500 text-black"
+              ref={passwordRef}
               placeholder="Enter your password"
             />
 
