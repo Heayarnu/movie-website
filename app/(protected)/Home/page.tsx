@@ -1,6 +1,5 @@
 import CarouselBannerWrapper from '@/components/CarouselBannerWrapper';
 import MoviesCarousel from '@/components/MoviesCarousel';
-import Header from '@/components/Header';
 import {
   getPopularMovies,
   getTopRatedMovies,
@@ -14,8 +13,6 @@ export default async function HomeScreen() {
 
   return (
     <div>
-      <Header />
-
       {/* CarouselBannerWrapper */}
       <CarouselBannerWrapper />
 

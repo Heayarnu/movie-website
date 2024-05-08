@@ -2,17 +2,15 @@
 
 import Image from 'next/image';
 import React from 'react';
-import { useRouter } from 'next/navigation';
 
-import HomeScreenRows from '@/components/HomeScreenRows';
-import CallToAction from '@/components/CallToAction';
+import HomeScreenRows from '@/app/_components/HomeScreenRows';
+import CallToAction from '@/app/_components/CallToAction';
 import { Button } from '@/components/ui/button';
-import Faq from '@/components/Faq';
+import Faq from '@/app/_components/Faq';
+import LoginButton from './_components/login-button';
 import Footer from '@/components/Footer';
 
 const Home = () => {
-  const router = useRouter();
-
   return (
     <div className="flex flex-col mx-auto">
       <div
@@ -33,19 +31,19 @@ const Home = () => {
               height={80}
               className="w-24 lg:w-40 lg:-mt-3 object-contain"
             />
-            <Button
-              className="bg-[#CC0000] hover:bg-[#990000] text-white h-8 w-20 mt-2 mr-1 lg:mt-3"
-              onClick={() => router.push('/SignIn')}
-            >
-              Sign in
-            </Button>
+
+            <LoginButton>
+              <Button className="bg-[#CC0000] hover:bg-[#990000] text-white h-8 w-20 mt-2 mr-1 lg:mt-3">
+                Sign in
+              </Button>
+            </LoginButton>
           </div>
 
           <div className="flex items-center justify-center flex-col mt-10 sm:mt-28 p-3 lg:mt-44">
-            <h1 className="text-[33px] leading-tight font-bold lg:text-5xl px-1 mb-4 text-center">
+            <h1 className="text-[33px] text-white leading-tight font-bold lg:text-5xl px-1 mb-4 text-center">
               Unlimited movies, Tv shows, and more
             </h1>
-            <p className="font-semibold text-xl lg:text-2xl text-center">
+            <p className="font-semibold text-xl text-white lg:text-2xl text-center">
               Watch anywhere. Cancel anytime.
             </p>
           </div>
@@ -74,8 +72,8 @@ const Home = () => {
         />
       </div>
 
-      <div className="bg-black border-y-8 border-gray-500 w-full pb-10">
-        <h1 className="font-bold text-center text-4xl mt-10 lg:text-5xl lg:mt-14 xl:text-6xl px-3">
+      <div className="bg-black border-y-8 border-stone-800 w-full pb-10">
+        <h1 className="text-white font-bold text-center text-4xl mt-10 lg:text-5xl lg:mt-14 xl:text-6xl px-3">
           Frequently Asked Questions
         </h1>
 
@@ -85,6 +83,8 @@ const Home = () => {
 
         <CallToAction />
       </div>
+
+      <Footer />
     </div>
   );
 };

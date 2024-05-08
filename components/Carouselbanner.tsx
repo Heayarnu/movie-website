@@ -16,12 +16,15 @@ const Carouselbanner = ({ movies }: { movies: Movie[] }) => {
 
   return (
     <div
-      className="overflow-hidden relative cursor-pointer md:h-2/4"
+      className="overflow-hidden mt-16 relative cursor-pointer md:h-2/4"
       ref={emblaRef}
     >
       <div className="flex relative">
         {movies.map((movie) => (
-          <div key={movie.id} className="flex-[0_0_100%] min-w-0 relative lg:-mt-40">
+          <div
+            key={movie.id}
+            className="flex-[0_0_100%] min-w-0 relative lg:-mt-40"
+          >
             <Image
               src={getImagePath(movie.backdrop_path, true)}
               alt=""
@@ -29,7 +32,7 @@ const Carouselbanner = ({ movies }: { movies: Movie[] }) => {
               height={1080}
             />
 
-            <div className="hidden md:inline mt-0 top-0 z-20 absolute pt-52 left-0 lg:mt-40 bg-transparent p-10 text-white h-full w-full bg-gradient-to-r from-gray-900/90 via-transparent to-transparent">
+            <div className="hidden md:inline mt-0 top-0 z-20 absolute pt-52 left-0 lg:mt-40 bg-transparent p-10 text-white h-full  object-cover w-full bg-gradient-to-r from-gray-900/70 via-transparent to-transparent">
               <h2 className="text-5xl font-bold max-w-xl z-50">
                 {movie.title}
               </h2>
@@ -38,9 +41,9 @@ const Carouselbanner = ({ movies }: { movies: Movie[] }) => {
             </div>
           </div>
         ))}
-          </div>
-          
-          <div className='absolute inset-0 bg-gradient-to-b from-gray-200/0 via-gray-900/25 to-gray-300 dark:to-[#1A1C29]'/>
+      </div>
+
+      <div className="absolute inset-0 dark:bg-gradient-to-b from-gray-200/0 via-gray-900/25 to-gray-300 dark:to-black/35" />
     </div>
   );
 };

@@ -43,7 +43,7 @@ const SearchInput = () => {
           render={({ field }) => (
             <FormItem>
               <FormControl>
-                <Input placeholder="Search..." {...field} className="md:pr-10" />
+                <Input placeholder="Search..." {...field} className="md:pr-10 bg-inherit" />
               </FormControl>
             </FormItem>
           )}

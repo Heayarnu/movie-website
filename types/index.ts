@@ -1,3 +1,5 @@
+import React from 'react';
+
 export interface SearchProps {
   params: {
     term: string;
@@ -37,6 +39,19 @@ export interface DisclosuresProps {
   children: string;
 }
 
+export interface LoginButtonProps {
+  children: React.ReactNode;
+  mode?: 'modal' | 'redirect';
+  asChild?: boolean;
+}
+
+export interface FormErrorProps {
+  message?: any;
+}
+
+export interface FormSuccessProps {
+  message?: any;
+}
 export interface CarouselBannerProps {
   id?: string;
   keywords?: string;

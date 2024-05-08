@@ -5,6 +5,7 @@ import { ThemeProvider } from '@/components/ThemeProvider';
 import '@fortawesome/fontawesome-svg-core/styles.css';
 import { config } from '@fortawesome/fontawesome-svg-core';
 import ReduxProvider from '@/Redux/reduxProvider';
+
 config.autoAddCss = false;
 
 export const metadata: Metadata = {
@@ -19,17 +20,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="bg-white dark:bg-[#1a1c29]">
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <ReduxProvider>{children}</ReduxProvider>
-
-          <Footer />
-        </ThemeProvider>
+      <body>
+        <ReduxProvider>{children}</ReduxProvider>
       </body>
     </html>
   );

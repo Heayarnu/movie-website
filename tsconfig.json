@@ -29,7 +29,7 @@
     "Redux/reduxProvider.jsx",
     "Redux/emailReducer.tsx",
     "Redux/store.tsx",
-    "app/SignUp/page.tsx"
-  ],
+    "app/(auth)/SignUp/page.tsx"
+, "app/(protected)/page.tsx"  ],
   "exclude": ["node_modules"]
 }
