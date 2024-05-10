@@ -1,5 +1,4 @@
 import CarouselBannerWrapper from '@/components/CarouselBannerWrapper';
-import GenreDropdown from '@/components/GenreDropdown';
 import MoviesCarousel from '@/components/MoviesCarousel';
 import {
   getPopularMovies,
@@ -14,10 +13,6 @@ export default async function HomeScreen() {
 
   return (
     <div>
-      {/* GenreDropdown */}
-      <div className="mt-20 mx-2 md:mx-4 lg:mx-10">
-        <GenreDropdown />
-      </div>
 
       {/* CarouselBannerWrapper */}
       <CarouselBannerWrapper />

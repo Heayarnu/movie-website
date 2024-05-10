@@ -3,6 +3,7 @@ import { ThemeProvider } from '@/components/ThemeProvider';
 import { config } from '@fortawesome/fontawesome-svg-core';
 import ReduxProvider from '@/Redux/reduxProvider';
 import Header from '@/components/Header';
+import GenreDropdown from '../../components/GenreDropdown';
 
 config.autoAddCss = false;
 
@@ -21,6 +22,10 @@ export default function HomeLayout({
       >
         {' '}
         <Header />
+        {/* GenreDropdown */}
+        <div className="mt-20 mx-2 md:mx-4 lg:mx-10">
+          <GenreDropdown />
+        </div>
         <ReduxProvider>{children}</ReduxProvider>
         <Footer />
       </ThemeProvider>
