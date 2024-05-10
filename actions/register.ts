@@ -6,6 +6,7 @@ import * as z from 'zod';
 import bcrypt from 'bcryptjs';
 import { db } from '@/lib/db';
 import { getUserByEmail } from '@/data/user';
+import { faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
 
 /**
  * Check if the provided email already exists in the database.
@@ -20,7 +21,7 @@ export const checkEmailExists = async (
 
   if (existingUser) {
     return {
-      error: 'Email already in use!',
+      error: '⚠️ Email already in use!',
     };
   }
 

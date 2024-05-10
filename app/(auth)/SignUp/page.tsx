@@ -21,6 +21,7 @@ import { register } from '@/actions/register';
 import { useAppSelector } from '@/Redux/hooks';
 import FormSuccess from '@/app/_components/form-success';
 import FormError from '@/app/_components/form-error';
+import Loader from '@/components/Loader';
 
 const Page = () => {
   const form = useForm<z.infer<typeof PasswordSchema>>({
@@ -32,6 +33,8 @@ const Page = () => {
 
   const [isPending, startTransition] = useTransition();
 
+  const [loading, setLoading] = useState(false);
+
   const router = useRouter();
 
   const email = useAppSelector((state) => state.email.value);
@@ -42,11 +45,14 @@ const Page = () => {
   const onSubmit = (passwordInput: z.infer<typeof PasswordSchema>) => {
     setError('');
     setSuccess('');
+    setLoading(true);
 
     startTransition(() => {
       register(email, passwordInput).then((data) => {
         setError(data.error);
       });
+
+      setLoading(false);
     });
   };
 
@@ -106,13 +112,23 @@ const Page = () => {
                   )}
                 />
 
-                <Button
-                  type="submit"
-                  className="bg-[#CC0000] hover:bg-[#990000] text-white h-10 w-full mt-2 
+                {loading ? (
+                  <Button
+                    type="button"
+                    className="bg-[#CC0000] hover:bg-[#990000] text-white h-10 w-full mt-2 
                   text-lg font-bold"
-                >
-                  Next
-                </Button>
+                  >
+                    <Loader />
+                  </Button>
+                ) : (
+                  <Button
+                    type="submit"
+                    className="bg-[#CC0000] hover:bg-[#990000] text-white h-10 w-full mt-2 
+                  text-lg font-bold"
+                  >
+                    Next
+                  </Button>
+                )}
 
                 <FormSuccess message={success} />
                 <FormError message={error} />

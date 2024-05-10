@@ -39,6 +39,7 @@ const Home = () => {
             </LoginButton>
           </div>
 
+          {/* Hero text */}
           <div className="flex items-center justify-center flex-col mt-10 sm:mt-28 p-3 lg:mt-44">
             <h1 className="text-[33px] text-white leading-tight font-bold lg:text-5xl px-1 mb-4 text-center">
               Unlimited movies, Tv shows, and more
@@ -72,6 +73,7 @@ const Home = () => {
         />
       </div>
 
+      {/* FAQ */}
       <div className="bg-black border-y-8 border-stone-800 w-full pb-10">
         <h1 className="text-white font-bold text-center text-4xl mt-10 lg:text-5xl lg:mt-14 xl:text-6xl px-3">
           Frequently Asked Questions

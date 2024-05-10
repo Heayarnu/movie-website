@@ -13,10 +13,10 @@ async function SearchPage({ params: { term } }: SearchProps) {
   const popularMovies = await getPopularMovies();
 
   return (
-    <div className="max-w-7xl mx-auto">
+    <div className="lg:max-w-7xl lg:mx-auto">
       <div className="flex flex-col space-y-4 mt-20">
         <div>
-          <h1 className="text-3xl md:text-5xl xl:text:7xl px-6 xl:px-10">
+          <h1 className="hidden md:block mt-10 text-xl md:text-3xl lg:texte-5xl xl:text:7xl px-6 xl:px-10">
             Search results for{' '}
             <span className="italic font-bold">{termToUse}</span>
           </h1>

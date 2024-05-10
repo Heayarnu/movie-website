@@ -27,6 +27,7 @@ export interface MovieCardProps {
   isVertical?: boolean;
 }
 
+
 export interface HomeScreenRowsProps {
   h1: string;
   h2: string;

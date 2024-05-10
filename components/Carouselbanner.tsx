@@ -16,7 +16,7 @@ const Carouselbanner = ({ movies }: { movies: Movie[] }) => {
 
   return (
     <div
-      className="overflow-hidden mt-16 relative cursor-pointer md:h-2/4"
+      className="overflow-hidden mt-5 relative cursor-pointer md:h-2/4"
       ref={emblaRef}
     >
       <div className="flex relative">
@@ -32,13 +32,13 @@ const Carouselbanner = ({ movies }: { movies: Movie[] }) => {
               height={1080}
             />
 
-            <div className="hidden md:inline mt-0 top-0 z-20 absolute pt-52 left-0 lg:mt-40 bg-transparent p-10 text-white h-full  object-cover w-full bg-gradient-to-r from-gray-900/70 via-transparent to-transparent">
+            {/* <div className="hidden md:inline mt-0 top-0 z-20 absolute pt-52 left-0 lg:mt-40 bg-transparent p-10 text-white h-full  object-cover w-full bg-gradient-to-r from-gray-900/70 via-transparent to-transparent">
               <h2 className="text-5xl font-bold max-w-xl z-50">
                 {movie.title}
               </h2>
 
               <p className="max-w-xl line-clamp-3">{movie.overview}</p>
-            </div>
+            </div> */}
           </div>
         ))}
       </div>

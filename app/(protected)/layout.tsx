@@ -12,20 +12,18 @@ export default function HomeLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className="bg-white dark:bg-black/35">
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          {' '}
-          <Header />
-          <ReduxProvider>{children}</ReduxProvider>
-          <Footer />
-        </ThemeProvider>
-      </body>
-    </html>
+    <body className="bg-white dark:bg-black/35">
+      <ThemeProvider
+        attribute="class"
+        defaultTheme="system"
+        enableSystem
+        disableTransitionOnChange
+      >
+        {' '}
+        <Header />
+        <ReduxProvider>{children}</ReduxProvider>
+        <Footer />
+      </ThemeProvider>
+    </body>
   );
 }

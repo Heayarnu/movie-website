@@ -19,7 +19,7 @@ import { Form, FormControl, FormField, FormItem } from '@/components/ui/form';
 import FormError from '@/app/_components/form-error';
 import { login } from '@/actions/login';
 import { useState, useTransition } from 'react';
-import { useAppSelector } from '@/Redux/hooks';
+import Loader from '@/components/Loader';
 
 const Page = () => {
   const form = useForm<z.infer<typeof LoginSchema>>({
@@ -30,20 +30,22 @@ const Page = () => {
     },
   });
 
-  const email = useAppSelector((state) => state.email.value);
-
   const [isPending, startTransition] = useTransition();
+  const [loading, setLoading] = useState(false);
 
   const router = useRouter();
 
   const [error, setError] = useState<string | undefined>('');
   const onSubmit = (values: z.infer<typeof LoginSchema>) => {
     setError('');
+    setLoading(true);
 
     startTransition(() => {
       login(values).then((data) => {
         setError(data?.error); // Add null check for 'data'
       });
+
+      setLoading(false);
     });
   };
 
@@ -112,13 +114,23 @@ const Page = () => {
                       )}
                     />
 
-                    <Button
-                      type="submit"
-                      disabled={isPending}
-                      className="bg-[#CC0000] hover:bg-[#990000] text-white h-10 w-full mt-2 text-lg font-bold"
-                    >
-                      Sign in
-                    </Button>
+                    {loading ? (
+                      <Button
+                        type="button"
+                        disabled={isPending}
+                        className="bg-[#CC0000] hover:bg-[#990000] text-white h-10 w-full mt-2 text-lg font-bold"
+                      >
+                        <Loader />
+                      </Button>
+                    ) : (
+                      <Button
+                        type="submit"
+                        disabled={isPending}
+                        className="bg-[#CC0000] hover:bg-[#990000] text-white h-10 w-full mt-2 text-lg font-bold"
+                      >
+                        Sign in
+                      </Button>
+                    )}
                   </form>
                 </Form>
 

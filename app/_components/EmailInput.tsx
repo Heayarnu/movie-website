@@ -18,6 +18,7 @@ import * as z from 'zod';
 import { useAppDispatch, useAppSelector } from '@/Redux/hooks';
 import { checkEmailExists } from '@/actions/register';
 import FormError from './form-error';
+import Loader from '@/components/Loader';
 
 const EmailInput = () => {
   const router = useRouter();
@@ -40,17 +41,23 @@ const EmailInput = () => {
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | undefined>('');
 
+  const [loading, setLoading] = useState(false);
+
   const onSubmit = async () => {
+    setLoading(true);
+
     startTransition(async () => {
-      console.log('isValid:', isValid);
       if (isValid) {
         const result = await checkEmailExists(email);
+
         if (result.success) {
           router.push('/SignUp');
         } else {
           setError(result.error);
         }
       }
+
+      setLoading(false);
     });
   };
 
@@ -74,24 +81,33 @@ const EmailInput = () => {
                           field.onChange(e);
                         }}
                         type="email"
-                        className="w-60 sm:w-72 md:w-96 h-14 my-5 rounded bg-gray-200/10 border-white text-white text-lg "
+                        className="w-60 sm:w-72 md:w-96 h-14 mt-5 mb-2 rounded bg-gray-200/10 border-white text-white text-lg "
                         placeholder="Email or mobile number"
                       />
                     </FormControl>
-                    <FormMessage />
+                    <FormMessage className="text-red-500" />
+                    <FormError message={error} />{' '}
                   </FormItem>
                 )}
               />
             </div>
 
-            <Button
-              type="submit"
-              className="sm:h-[60px] sm:w-48 w-40 h-10 text-lg flex sm:text-2xl bg-[#CC0000] hover:bg-[#990000] text-white mx-2 mt-2 sm:mt-[18px]"
-            >
-              Get Started <ChevronRight className="mt-1 ml-1" />
-            </Button>
+            {loading ? (
+              <Button
+                type="button"
+                className="sm:h-[60px] sm:w-48 w-40 h-10 text-lg flex sm:text-2xl bg-[#CC0000] hover:bg-[#990000] text-white mx-2 mt-2 sm:mt-[18px]"
+              >
+                <Loader />
+              </Button>
+            ) : (
+              <Button
+                type="submit"
+                className="sm:h-[60px] sm:w-48 w-40 h-10 text-lg flex sm:text-2xl bg-[#CC0000] hover:bg-[#990000] text-white mx-2 mt-2 sm:mt-[18px]"
+              >
+                Get Started <ChevronRight className="mt-0.5 sm:mt-1 ml-1" />
+              </Button>
+            )}
           </div>
-          <FormError message={error} />
         </form>
       </Form>
     </div>

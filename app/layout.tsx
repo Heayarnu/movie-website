@@ -1,7 +1,5 @@
 import type { Metadata } from 'next';
 import './globals.css';
-import Footer from '@/components/Footer';
-import { ThemeProvider } from '@/components/ThemeProvider';
 import '@fortawesome/fontawesome-svg-core/styles.css';
 import { config } from '@fortawesome/fontawesome-svg-core';
 import ReduxProvider from '@/Redux/reduxProvider';

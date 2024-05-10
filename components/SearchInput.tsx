@@ -1,5 +1,3 @@
-'use client';
-
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
@@ -9,15 +7,27 @@ import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
+import { useEffect, useRef } from 'react';
 
 const formSchema = z.object({
   input: z.string().min(2).max(50),
 });
 
-const SearchInput = () => {
+interface SearchInputProps {
+  showSearch?: boolean;
+}
+
+const SearchInput = ({ showSearch }: SearchInputProps) => {
   const router = useRouter();
 
-  // 1. Define your form.
+  const inputRef = useRef<HTMLInputElement>(null);
+  useEffect(() => {
+    if (showSearch && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [showSearch]);
+
+  //  Define form.
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -25,7 +35,7 @@ const SearchInput = () => {
     },
   });
 
-  // 2. Define a submit handler.
+  // Define submit handler.
   function onSubmit(values: z.infer<typeof formSchema>) {
     router.push(`/search/${values.input}`);
     form.reset();
@@ -43,7 +53,16 @@ const SearchInput = () => {
           render={({ field }) => (
             <FormItem>
               <FormControl>
-                <Input placeholder="Search..." {...field} className="md:pr-10 bg-inherit" />
+                <Input
+                  placeholder="Search..."
+                  {...field}
+                  ref={inputRef}
+                  className={`md:pr-10 lg:bg-inherit focus:border-none focus-visible:ring-0  focus-visible:ring-offset-0 lg:focus-visible:outline-none lg:focus-visible:ring-2 focus-visible:ring-ring lg:focus-visible:ring-offset-2 ${
+                    showSearch
+                      ? 'border-none rounded-none mx-0 pl-12  placeholder:text-stone-700 text-black bg-stone-100 dark:placeholder:text-stone-300 w-screen mb-2 h-14 text-xl dark:bg-stone-500 dark:text-white'
+                      : ''
+                  }`}
+                />
               </FormControl>
             </FormItem>
           )}
@@ -51,9 +70,12 @@ const SearchInput = () => {
         <Button
           type="submit"
           variant="ghost"
-          className="hidden md:inline-flex absolute right-0 top-0 w-5"
+          className="absolute mt-[10px] lg:mt-0 lg:right-0 lg:top-0 left-0 lg:left-auto"
         >
-          <FontAwesomeIcon icon={faMagnifyingGlass} />
+          <FontAwesomeIcon
+            icon={faMagnifyingGlass}
+            className="text-xl lg:text-base"
+          />
         </Button>
       </form>
     </Form>

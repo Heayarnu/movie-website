@@ -1,4 +1,4 @@
-import { ChevronsUpDown } from 'lucide-react';
+import { ChevronDownIcon, ChevronsUpDown } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuSeparator,
@@ -10,31 +10,59 @@ import {
 import { fetchMovies } from '@/utils';
 import Link from 'next/link';
 import { ScrollArea } from './ui/scroll-area';
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from './ui/sheet';
+import { Button } from './ui/button';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faX } from '@fortawesome/free-solid-svg-icons';
 async function GenreDropdown() {
   const data = await fetchMovies();
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger className="text-black dark:text-white flex justify-center items-center border rounded-xl p-2 bg-inherit">
-        Genre <ChevronsUpDown className="ml-2 h-5 mt-1" />
-      </DropdownMenuTrigger>
+    <Sheet>
+      <SheetTrigger asChild>
+        <Button className="text-black dark:text-white flex justify-center items-center border rounded-3xl px-5 bg-inherit hover:bg-zinc-500">
+          Categories <ChevronDownIcon className="ml-2 mt-1" />
+        </Button>
+      </SheetTrigger>
 
-      <DropdownMenuContent>
-        <DropdownMenuLabel>Select a Genre</DropdownMenuLabel>
+      <SheetContent
+        side="top"
+        className="h-screen bg-black/10 flex items-center justify-center"
+      >
+        <ScrollArea className="h-[80vh]">
+          <SheetHeader>
+            <SheetClose asChild>
+              <SheetTitle className="text-white  text-2xl flex justify-center items-center cursor-pointer">
+                Home
+              </SheetTitle>
+            </SheetClose>
+          </SheetHeader>
 
-        <DropdownMenuSeparator />
-
-        <ScrollArea className="h-96">
           {data.genres.map((genre) => (
-            <DropdownMenuItem key={genre.id} className='cursor-pointer'>
-              <Link className='w-full' href={`/genre/${genre.id}?genre=${genre.name}`}>
-                {genre.name}
-              </Link>
-            </DropdownMenuItem>
+            <div key={genre.id}>
+              <button className="w-full text-white text-lg flex items-center justify-center space-y-2 mt-4">
+                <Link href={`/genre/${genre.id}?genre=${genre.name}`}>
+                  {genre.name}
+                </Link>
+              </button>
+            </div>
           ))}
         </ScrollArea>
-      </DropdownMenuContent>
-    </DropdownMenu>
+        <SheetFooter className="w-16 h-16 bg-white absolute bottom-5 justify-center items-center rounded-full">
+          <SheetClose asChild>
+            <FontAwesomeIcon icon={faX} className="text-black text-3xl" />
+          </SheetClose>
+        </SheetFooter>
+      </SheetContent>
+    </Sheet>
   );
 }
 
