@@ -1,13 +1,12 @@
 'use client';
 
+import { useAppSelector } from '@/Redux/hooks';
+import { PasswordSchema } from '@/Schemas';
+import { register } from '@/actions/register';
+import FormError from '@/app/_components/form-error';
+import Loader from '@/components/Loader';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import React, { useState, useTransition } from 'react';
-import { useForm } from 'react-hook-form';
-import { PasswordSchema } from '@/Schemas';
-import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod';
 import {
   Form,
   FormControl,
@@ -15,14 +14,14 @@ import {
   FormItem,
   FormMessage,
 } from '@/components/ui/form';
-import { register } from '@/actions/register';
-import { useAppSelector } from '@/Redux/hooks';
-import FormError from '@/app/_components/form-error';
-import Loader from '@/components/Loader';
+import { Input } from '@/components/ui/input';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { Check, CheckCircle2Icon } from 'lucide-react';
-import SignUpNav from '@/app/_components/SignUpNav';
-import { useRouter } from 'next/navigation';
 import { signIn } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
+import { useState, useTransition } from 'react';
+import { useForm } from 'react-hook-form';
+import * as z from 'zod';
 
 const Page = () => {
   const router = useRouter();
