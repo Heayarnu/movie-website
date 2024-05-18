@@ -2,10 +2,30 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Set height for html, body and root elements */
 html,
 body,
 :root {
   height: 100%;
+}
+
+/* Apply box-sizing property to html */
+html {
+  box-sizing: border-box;
+}
+
+/* Inherit box-sizing property for all elements and their before and after pseudo-elements */
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+}
+
+/* Set body styles */
+body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden; /* Prevent horizontal scrolling */
 }
 
 @layer base {

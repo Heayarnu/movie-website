@@ -1,18 +1,23 @@
+import React from 'react';
 import Footer from '@/components/Footer';
 
-export default function AuthLayout({
-  children,
-}: Readonly<{
+interface LayoutProps {
   children: React.ReactNode;
-}>) {
+}
+
+const Layout: React.FC<LayoutProps> = ({ children }) => {
   return (
     <div
-      className="relative flex flex-col min-h-screen bg-cover bg-center"
+      className="bg-cover bg-center relative flex flex-col"
       style={{ backgroundImage: "url('/background-image.png')" }}
     >
-      {children}
+      <main>{children}</main>
 
-      <Footer />
+      <div className="bottom-0 w-full">
+        <Footer />
+      </div>
     </div>
   );
-}
+};
+
+export default Layout;

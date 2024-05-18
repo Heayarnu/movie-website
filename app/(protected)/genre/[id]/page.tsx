@@ -10,9 +10,9 @@ async function GenrePage({
   const movies = await getDiscoverMovies(id);
 
   return (
-    <div className="mx-auto">
-      <div className="flex flex-col mt-20">
-        <h1 className="text-2xl md:text-5xl xl:text:7xl font-semibold px-4 mt-2 py-2 xl:px-10 font-mono w-fit ml-5 md:ml-10">
+    <div className="mx-auto relative pt-32">
+      <div className="flex flex-col">
+        <h1 className="text-2xl md:text-5xl xl:text:7xl font-semibold px-4 xl:px-10 font-mono ml-5 md:ml-10">
           {genre}
         </h1>
 

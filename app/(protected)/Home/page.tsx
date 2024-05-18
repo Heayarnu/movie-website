@@ -1,5 +1,6 @@
 import CarouselBannerWrapper from '@/components/CarouselBannerWrapper';
 import MoviesCarousel from '@/components/MoviesCarousel';
+import { currentUser } from '@/lib/auth';
 import {
   getPopularMovies,
   getTopRatedMovies,
@@ -11,9 +12,10 @@ export default async function HomeScreen() {
   const topRatedMovies = await getTopRatedMovies();
   const popularMovies = await getPopularMovies();
 
+  const user = await currentUser();
+
   return (
     <div>
-
       {/* CarouselBannerWrapper */}
       <CarouselBannerWrapper />
 

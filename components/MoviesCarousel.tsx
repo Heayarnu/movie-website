@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils';
 
 const MoviesCarousel = ({ title, movies, isVertical }: MovieCarouselProps) => {
   return (
-    <div className="z-40 w-screen">
+    <div className="w-screen">
       <h2 className="mt-1 md:mt-3 text-xl lg:text-3xl font-bold px-4 md:px-10">
         {title}
       </h2>

@@ -95,13 +95,15 @@ const EmailInput = () => {
             {loading ? (
               <Button
                 type="button"
+                disabled={isPending}
                 className="sm:h-[60px] sm:w-48 w-40 h-10 text-lg flex sm:text-2xl bg-[#CC0000] hover:bg-[#990000] text-white mx-2 mt-2 sm:mt-[18px]"
               >
                 <Loader />
               </Button>
             ) : (
               <Button
-                type="submit"
+                  type="submit"
+                  disabled={isPending}
                 className="sm:h-[60px] sm:w-48 w-40 h-10 text-lg flex sm:text-2xl bg-[#CC0000] hover:bg-[#990000] text-white mx-2 mt-2 sm:mt-[18px]"
               >
                 Get Started <ChevronRight className="mt-0.5 sm:mt-1 ml-1" />

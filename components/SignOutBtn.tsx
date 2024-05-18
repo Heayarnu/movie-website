@@ -8,8 +8,7 @@ const SignOutBtn = () => {
         variant="ghost"
         type="button"
         onClick={() => signOut()}
-        className="bg-[#CC0000]
-      hover:bg-[#990000] text-white"
+        className="text-lg md:text-2xl p-5 md:p-8 xl:p-5"
       >
         Sign Out
       </Button>

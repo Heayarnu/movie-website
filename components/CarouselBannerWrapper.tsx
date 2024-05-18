@@ -5,7 +5,7 @@ async function CarouselBannerWrapper() {
   const movies = await NowPlaying();
 
   return (
-    <div className="mb-2 md:mb-0">
+    <div className="mb-2">
       <Carouselbanner movies={movies} />
     </div>
   );

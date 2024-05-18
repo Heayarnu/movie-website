@@ -13,19 +13,16 @@ export default function HomeLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <body className="bg-white dark:bg-black/35">
+    <body className="bg-white dark:bg-black/35 relative">
       <ThemeProvider
         attribute="class"
         defaultTheme="system"
         enableSystem
         disableTransitionOnChange
       >
-        {' '}
         <Header />
         {/* GenreDropdown */}
-        <div className="mt-20 mx-2 md:mx-4 lg:mx-10">
-          <GenreDropdown />
-        </div>
+        <GenreDropdown />
         <ReduxProvider>{children}</ReduxProvider>
         <Footer />
       </ThemeProvider>

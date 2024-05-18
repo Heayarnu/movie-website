@@ -57,11 +57,7 @@ const SearchInput = ({ showSearch }: SearchInputProps) => {
                   placeholder="Search..."
                   {...field}
                   ref={inputRef}
-                  className={`md:pr-10 lg:bg-inherit focus:border-none focus-visible:ring-0  focus-visible:ring-offset-0 lg:focus-visible:outline-none lg:focus-visible:ring-2 focus-visible:ring-ring lg:focus-visible:ring-offset-2 ${
-                    showSearch
-                      ? 'border-none rounded-none mx-0 pl-12  placeholder:text-stone-700 text-black bg-stone-100 dark:placeholder:text-stone-300 w-screen mb-2 h-14 text-xl dark:bg-stone-500 dark:text-white'
-                      : ''
-                  }`}
+                  className=" md:pr-10 focus:border-none focus-visible:ring-0 focus-visible:ring-offset-0 border-none rounded-none mx-0 pl-12 text-black bg-stone-100 placeholder:text-stone-400 w-screen mb-2 h-14 text-xl dark:bg-stone-500 dark:text-white "
                 />
               </FormControl>
             </FormItem>
@@ -70,11 +66,11 @@ const SearchInput = ({ showSearch }: SearchInputProps) => {
         <Button
           type="submit"
           variant="ghost"
-          className="absolute mt-[10px] lg:mt-0 lg:right-0 lg:top-0 left-0 lg:left-auto"
+          className="absolute mt-[10px] top-0 left-0  hover:bg-transparent hover:scale-125"
         >
           <FontAwesomeIcon
             icon={faMagnifyingGlass}
-            className="text-xl lg:text-base"
+            className="hover:bg-transparent text-xl"
           />
         </Button>
       </form>

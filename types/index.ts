@@ -1,3 +1,4 @@
+import { ExtendedUser } from '@/next-auth';
 import React from 'react';
 
 export interface SearchProps {
@@ -26,7 +27,6 @@ export interface MovieCardProps {
   movie: Movie;
   isVertical?: boolean;
 }
-
 
 export interface HomeScreenRowsProps {
   h1: string;

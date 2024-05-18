@@ -3,9 +3,7 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import Image from 'next/image';
-import { useRouter } from 'next/navigation';
-import React, { useRef, useState, useTransition } from 'react';
+import React, { useState, useTransition } from 'react';
 import { useForm } from 'react-hook-form';
 import { PasswordSchema } from '@/Schemas';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -19,11 +17,16 @@ import {
 } from '@/components/ui/form';
 import { register } from '@/actions/register';
 import { useAppSelector } from '@/Redux/hooks';
-import FormSuccess from '@/app/_components/form-success';
 import FormError from '@/app/_components/form-error';
 import Loader from '@/components/Loader';
+import { Check, CheckCircle2Icon } from 'lucide-react';
+import SignUpNav from '@/app/_components/SignUpNav';
+import { useRouter } from 'next/navigation';
+import { signIn } from 'next-auth/react';
 
 const Page = () => {
+  const router = useRouter();
+
   const form = useForm<z.infer<typeof PasswordSchema>>({
     resolver: zodResolver(PasswordSchema),
     defaultValues: {
@@ -35,12 +38,12 @@ const Page = () => {
 
   const [loading, setLoading] = useState(false);
 
-  const router = useRouter();
-
   const email = useAppSelector((state) => state.email.value);
 
   const [error, setError] = useState<string | undefined>('');
   const [success, setSuccess] = useState<string | undefined>('');
+
+  const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
 
   const onSubmit = (passwordInput: z.infer<typeof PasswordSchema>) => {
     setError('');
@@ -50,90 +53,137 @@ const Page = () => {
     startTransition(() => {
       register(email, passwordInput).then((data) => {
         setError(data.error);
+        setSuccess(data.success);
+
+        // If registration is successful, sign in the user
+        if (!data.error) {
+          signIn('credentials', {
+            email: email,
+            password: passwordInput.password,
+            redirect: false,
+          });
+        }
       });
 
       setLoading(false);
+      setIsSubmitted(true);
     });
   };
 
   return (
-    <div className="bg-white h-screen">
-      <div className="flex mx-2 sm:mx-6 flex-row border-b border-gray-300 justify-between">
-        <Image
-          src="/logo.png"
-          alt="logo"
-          width={200}
-          height={80}
-          className="w-24 sm:w-44 object-contain cursor-pointer"
-          onClick={() => router.push('/')}
-        />
-
-        <Button
-          className="bg-transparent text-black mt-1 sm:mt-6 lg:mt-8 sm:text-2xl  font-semibold hover:bg-[#990000] transition-all transform hover:text-white"
-          onClick={() => router.push('/SignIn')}
-        >
-          Sign in
-        </Button>
-      </div>
-
-      <div className="w-full h-full sm:w-[470px] sm:mt-5 mx-auto">
-        <Card className="sm:p-7 border-none bg-transparent flex justify-center flex-col px-4">
+    <div className="h-screen bg-white">
+      <div className="mx-auto h-full w-full sm:mt-5 sm:w-[470px]">
+        <Card className="flex flex-col justify-center border-none bg-transparent px-4 sm:p-7">
           <CardHeader>
-            <CardTitle className="sm:mt-4 font-bold text-3xl text-black/80">
-              Welcome back! <br /> Joining Netflix is easy.
+            <CardTitle className="text-3xl font-bold text-black/80 sm:mt-4">
+              {!isSubmitted ? (
+                <p>
+                  Welcome back! <br /> Joining Netflix is easy.
+                </p>
+              ) : (
+                <p className=" flex flex-col text-center text-base font-normal">
+                  <div className="mb-7 flex items-center justify-center">
+                    <CheckCircle2Icon className="h-14 w-14 text-[#CC0000]" />
+                  </div>
+
+                  <div>
+                    STEP <span className="font-bold"> 1 </span> OF{' '}
+                    <span className="font-bold">3</span>
+                  </div>
+
+                  <div className="ml-6 self-start text-4xl font-bold">
+                    Choose your plan.
+                  </div>
+                </p>
+              )}
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <h2 className="text-black/70 text-xl font-medium">
-              Enter your password and you&apos;ll be watching in no time.
-            </h2>
+            {!isSubmitted ? (
+              <div>
+                <h2 className="text-xl font-medium text-black/70">
+                  Enter your password and you&apos;ll be watching in no time.
+                </h2>
 
-            <p className="text-black/70 text-lg font-medium mt-6">Email</p>
+                <p className="mt-6 text-lg font-medium text-black/70">Email</p>
 
-            <p className="text-black text-lg font-medium -mt-2">{email}</p>
-            <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)}>
-                <FormField
-                  control={form.control}
-                  name="password"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormControl>
-                        <Input
-                          {...field}
-                          disabled={isPending}
-                          className="my-4 rounded h-16 f bg-gray-200/10 text-black border-white text-lg"
-                          placeholder="Enter your password"
-                          type="password"
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                <p className="-mt-2 text-lg font-medium text-black">{email}</p>
+                <Form {...form}>
+                  <form onSubmit={form.handleSubmit(onSubmit)}>
+                    <FormField
+                      control={form.control}
+                      name="password"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormControl>
+                            <Input
+                              {...field}
+                              disabled={isPending}
+                              className="f my-4 h-16 rounded border-white bg-gray-200/10 text-lg text-black"
+                              placeholder="Enter your password"
+                              type="password"
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
 
-                {loading ? (
-                  <Button
-                    type="button"
-                    className="bg-[#CC0000] hover:bg-[#990000] text-white h-10 w-full mt-2 
-                  text-lg font-bold"
-                  >
-                    <Loader />
-                  </Button>
-                ) : (
-                  <Button
-                    type="submit"
-                    className="bg-[#CC0000] hover:bg-[#990000] text-white h-10 w-full mt-2 
-                  text-lg font-bold"
-                  >
-                    Next
-                  </Button>
-                )}
+                    {loading ? (
+                      <Button
+                        type="button"
+                        disabled={isPending}
+                        className="mt-2 h-10 w-full bg-[#CC0000] text-lg font-bold 
+                  text-white hover:bg-[#990000]"
+                      >
+                        <Loader />
+                      </Button>
+                    ) : (
+                      <Button
+                        type="submit"
+                        disabled={isPending}
+                        className="mt-2 h-10 w-full bg-[#CC0000] text-lg font-bold 
+                  text-white hover:bg-[#990000]"
+                      >
+                        Next
+                      </Button>
+                    )}
 
-                <FormSuccess message={success} />
-                <FormError message={error} />
-              </form>
-            </Form>
+                    <FormError message={error} />
+                  </form>
+                </Form>
+              </div>
+            ) : (
+              <div
+                className="max-w-80 space-y-3 text-xl
+              "
+              >
+                <p className="flex">
+                  {' '}
+                  <Check className="mr-2 mt-1 h-10 w-8 text-[#CC0000]" /> No
+                  commitments, cancel at any time.
+                </p>
+                <p className="flex">
+                  {' '}
+                  <Check className="mr-2 mt-1 h-10 w-8 text-[#CC0000]" />
+                  Everything on Netflix for one low price.
+                </p>
+                <p className="flex">
+                  {' '}
+                  <Check className="mr-2 mt-2 h-10 w-8 text-[#CC0000]" />
+                  No adverts and no extra fees. Ever.
+                </p>
+
+                <Button
+                  onClick={() => {
+                    router.push('/SignUp/planform');
+                  }}
+                  className="mt-2 h-14 w-full rounded-none bg-[#CC0000] text-lg font-bold text-white hover:bg-[#990000]"
+                >
+                  Next
+                </Button>
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>

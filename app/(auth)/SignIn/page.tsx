@@ -20,6 +20,7 @@ import FormError from '@/app/_components/form-error';
 import { login } from '@/actions/login';
 import { useState, useTransition } from 'react';
 import Loader from '@/components/Loader';
+import FormSuccess from '@/app/_components/form-success';
 
 const Page = () => {
   const form = useForm<z.infer<typeof LoginSchema>>({
@@ -36,13 +37,15 @@ const Page = () => {
   const router = useRouter();
 
   const [error, setError] = useState<string | undefined>('');
+
   const onSubmit = (values: z.infer<typeof LoginSchema>) => {
     setError('');
+
     setLoading(true);
 
     startTransition(() => {
       login(values).then((data) => {
-        setError(data?.error); // Add null check for 'data'
+        setError(data?.error);
       });
 
       setLoading(false);
@@ -66,8 +69,8 @@ const Page = () => {
             />
           </div>
 
-          <div className="w-full h-full sm:w-[470px] sm:mt-5 mx-auto">
-            <Card className="p-10 border-none bg-black sm:bg-opacity-75 flex justify-center flex-col mb-20">
+          <div className="w-full h-full sm:w-[470px] sm:mt-5 mx-auto mb-20">
+            <Card className="p-10 border-none bg-black sm:bg-opacity-75 flex justify-center flex-col">
               <CardHeader>
                 <CardTitle className="font-bold text-4xl text-white">
                   Sign In

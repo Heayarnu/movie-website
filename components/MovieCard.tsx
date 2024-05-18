@@ -5,7 +5,7 @@ import Image from 'next/image';
 
 const MovieCard = ({ movie, isVertical }: MovieCardProps) => {
   return (
-    <div className="flex flex-col lg:mx-1 my-2 cursor-pointer transform hover:scale-105 transition duration-200 ease-out">
+    <div className="flex flex-col mx-1 my-2 cursor-pointer transform hover:scale-105 transition duration-200 ease-out">
       <Image
         src={getImagePath(movie.backdrop_path || movie.poster_path)}
         alt={movie.title}

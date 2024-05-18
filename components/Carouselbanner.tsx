@@ -6,6 +6,11 @@ import useEmblaCarousel from 'embla-carousel-react';
 import Autoplay from 'embla-carousel-autoplay';
 import { getImagePath } from '@/utils';
 import Image from 'next/image';
+import { Button } from './ui/button';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPlay } from '@fortawesome/free-solid-svg-icons';
+import Favorites from './FavoritesButton';
+import { InfoIcon } from 'lucide-react';
 
 Autoplay.globalOptions = { delay: 8000 };
 
@@ -15,35 +20,44 @@ const Carouselbanner = ({ movies }: { movies: Movie[] }) => {
   ]);
 
   return (
-    <div
-      className="overflow-hidden mt-5 relative cursor-pointer md:h-2/4"
-      ref={emblaRef}
-    >
-      <div className="flex relative">
+    <div className="overflow-hidden relative" ref={emblaRef}>
+      <div className="flex">
         {movies.map((movie) => (
-          <div
-            key={movie.id}
-            className="flex-[0_0_100%] min-w-0 relative lg:-mt-40"
-          >
+          <div key={movie.id} className="flex-[0_0_100%] min-w-0 relative">
             <Image
               src={getImagePath(movie.backdrop_path, true)}
               alt=""
               width={1920}
               height={1080}
+              className="w-screen h-[60vh] md:h-[70vh] xl:h-screen"
             />
 
-            {/* <div className="hidden md:inline mt-0 top-0 z-20 absolute pt-52 left-0 lg:mt-40 bg-transparent p-10 text-white h-full  object-cover w-full bg-gradient-to-r from-gray-900/70 via-transparent to-transparent">
-              <h2 className="text-5xl font-bold max-w-xl z-50">
-                {movie.title}
-              </h2>
+            <div className="absolute z-30 top-0 left-0 bg-transparent bg-gradient-to-r from-black/90 via-black/25 to-transparent text-white h-full w-full ">
+              <div className="absolute bottom-10 p-4 md:p-10 space-y-3 md:space-y-5">
+                <h2 className="text-xl md:text-3xl font-bold max-w-[70vw]">
+                  {movie.title}
+                </h2>
 
-              <p className="max-w-xl line-clamp-3">{movie.overview}</p>
-            </div> */}
+                <div>
+                  <p className="max-w-[50vw] line-clamp-3 md:text-lg text-sm">
+                    {movie.overview}
+                  </p>
+                </div>
+
+                <div className="flex flex-row justify-start gap-2">
+                  <Button className="bg-white hover:bg-gray-200 px-7 text-lg md:text-xl text-black hover:scale-110">
+                    <FontAwesomeIcon icon={faPlay} className="mr-1" /> Play
+                  </Button>
+
+                  <Button className="bg-stone-500 text-white hover:scale-110 hover:bg-stone-600 pl-2 text-lg md:text-xl cursor-pointer">
+                    <InfoIcon className="mr-1" /> More info
+                  </Button>
+                </div>
+              </div>
+            </div>
           </div>
         ))}
       </div>
-
-      <div className="absolute inset-0 dark:bg-gradient-to-b from-gray-200/0 via-gray-900/25 to-gray-300 dark:to-black/35" />
     </div>
   );
 };
