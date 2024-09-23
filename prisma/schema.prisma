@@ -1,0 +1,73 @@
+// prisma/schema.prisma
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  // uncomment next line if you use Prisma <5.10
+  // directUrl = env("DATABASE_URL_UNPOOLED")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String  @unique @map("user_id") // Ensure userId is unique for one-to-one relationship
+  type              String
+  provider          String
+  providerAccountId String  @map("provider_account_id")
+  refreshToken      String? @map("refresh_token") @db.Text
+  accessToken       String? @map("access_token") @db.Text
+  expiresAt         Int?    @map("expires_at")
+  tokenType         String? @map("token_type")
+  scope             String?
+  idToken           String? @map("id_token") @db.Text
+  sessionState      String? @map("session_state")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("accounts")
+}
+
+enum UserRole {
+  ADMIN
+  USER
+}
+
+model User {
+  id           String            @id @default(cuid())
+  name         String?
+  email        String?           @unique
+  password     String?
+  role         UserRole          @default(USER)
+  isActive     Boolean           @default(false)
+  account      Account? // Change to one-to-one relationship
+  subscription UserSubscription?
+  profiles     Profile[]
+
+  @@map("users")
+}
+
+model UserSubscription {
+  id                     String    @id @default(cuid())
+  userId                 String    @unique
+  stripeCustomerId       String?   @unique @map("stripe_customer_id")
+  stripeSubscriptionId   String?   @unique @map("stripe_subscription_id")
+  stripePriceId          String?   @map("stripe_price_id")
+  stripeCurrentPeriodEnd DateTime? @map("stripe_current_period_end")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("user_subscriptions")
+}
+
+model Profile {
+  id       Int    @id @default(autoincrement())
+  name     String
+  imageSrc String
+  userId   String
+  user     User   @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+}
