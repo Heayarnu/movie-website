@@ -37,14 +37,10 @@ const handleCheckoutSessionCompleted = async (
         stripeSubscriptionId: subscription.id,
         stripeCustomerId: subscription.customer as string,
         stripePriceId: subscription.items.data[0].price.id,
-        stripeCurrentPeriodEnd: new Date(subscription.current_period_end * 1000),
+        stripeCurrentPeriodEnd: new Date(
+          subscription.current_period_end * 1000,
+        ),
       },
-    });
-
-    // Mark user as active after subscription is created
-    await db.user.update({
-      where: { id: session.metadata.userId },
-      data: { isActive: true },
     });
   } catch (error: any) {
     console.error('Error in handleCheckoutSessionCompleted:', error);
@@ -67,23 +63,11 @@ const handleInvoicePaymentSucceeded = async (
       },
       data: {
         stripePriceId: subscription.items.data[0].price.id,
-        stripeCurrentPeriodEnd: new Date(subscription.current_period_end * 1000),
+        stripeCurrentPeriodEnd: new Date(
+          subscription.current_period_end * 1000,
+        ),
       },
     });
-
-    // Reactivate the user if payment succeeds
-    const user = await db.user.findFirst({
-      where: {
-        subscription: { stripeSubscriptionId: subscription.id },
-      },
-    });
-
-    if (user) {
-      await db.user.update({
-        where: { id: user.id },
-        data: { isActive: true },
-      });
-    }
   } catch (error: any) {
     console.error('Error in handleInvoicePaymentSucceeded:', error);
     throw error;
@@ -92,20 +76,12 @@ const handleInvoicePaymentSucceeded = async (
 
 const handleSubscriptionDeleted = async (subscription: Stripe.Subscription) => {
   try {
-    // Find the user based on the subscription ID
-    const user = await db.user.findFirst({
+    // Delete the subscription from the database
+    await db.userSubscription.delete({
       where: {
-        subscription: { stripeSubscriptionId: subscription.id },
+        stripeSubscriptionId: subscription.id,
       },
     });
-
-    if (user) {
-      // Mark the user as inactive if the subscription is deleted
-      await db.user.update({
-        where: { id: user.id },
-        data: { isActive: false },
-      });
-    }
   } catch (error: any) {
     console.error('Error in handleSubscriptionDeleted:', error);
     throw error;
@@ -125,11 +101,10 @@ export async function POST(req: Request) {
         await handleInvoicePaymentSucceeded(session);
         break;
       case 'customer.subscription.deleted':
-      case 'customer.subscription.updated': // Optional: Handle updates
-        await handleSubscriptionDeleted(event.data.object as Stripe.Subscription);
+        await handleSubscriptionDeleted(
+          event.data.object as Stripe.Subscription,
+        );
         break;
-      default:
-        console.log(`Unhandled event type: ${event.type}`);
     }
 
     return new NextResponse(null, { status: 200 });

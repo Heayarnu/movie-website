@@ -13,7 +13,8 @@ import { Profile, ProfileCardProps } from '@/types/index';
 import { Plus } from 'lucide-react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState, useTransition } from 'react';
+import { DotLoader } from 'react-spinners';
 
 // Predefined profile images
 const predefinedImages = [
@@ -58,18 +59,14 @@ const AddProfileCard = ({ onClick }: { onClick: () => void }) => (
     </div>
   </div>
 );
-
 const Profiles = () => {
   const [profiles, setProfiles] = useState<Profile[]>([]);
-
   const [profileName, setProfileName] = useState('');
-
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
-
   const [isModalOpen, setIsModalOpen] = useState(false);
-
   const [error, setError] = useState('');
-
+  const [isLoading, setIsLoading] = useState(true); // Added loading state
+  const [isPending, startTransition] = useTransition();
   const router = useRouter();
 
   // Fetch profiles on mount
@@ -86,6 +83,8 @@ const Profiles = () => {
         }
       } catch (err) {
         setError('Something went wrong. Please try again.');
+      } finally {
+        setIsLoading(false); // Set loading to false once data is fetched
       }
     };
     fetchProfiles();
@@ -94,7 +93,9 @@ const Profiles = () => {
   // Handle profile click
   const handleProfileClick = useCallback(
     (profile: Profile) => {
-      router.push('/Home');
+      startTransition(() => {
+        router.push('/Home');
+      });
     },
     [router],
   );
@@ -103,57 +104,75 @@ const Profiles = () => {
   const handleAddProfile = async () => {
     if (!profileName || !selectedImage) return; // Ensure profile name and image are selected
 
-    try {
-      const response = await fetch('/api/profiles', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          name: profileName,
-          imageSrc: selectedImage,
-        }),
-      });
+    startTransition(async () => {
+      try {
+        const response = await fetch('/api/profiles', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            name: profileName,
+            imageSrc: selectedImage,
+          }),
+        });
 
-      const profile = await response.json();
+        if (!response.ok) {
+          throw new Error('Failed to create profile');
+        }
 
-      // Successfully created the profile
-      setProfiles((prev) => [...prev, profile]);
-      handleProfileClick(profile);
-    } catch (err) {
-      setError('Something went wrong. Please try again.'); // Catch and handle unexpected errors
-      console.error('Error:', err);
-    }
+        const profile = await response.json();
+
+        // Successfully created the profile
+        setProfiles((prev) => [...prev, profile]);
+        handleProfileClick(profile);
+      } catch (err) {
+        setError('Something went wrong. Please try again.');
+        console.error('Error:', err);
+      }
+    });
   };
 
   // Open/close modal
   const handleOpenModal = () => setIsModalOpen(true);
   const handleCloseModal = () => setIsModalOpen(false);
 
+  // Return a loading state until profiles are fetched
+  if (isLoading) {
+    return (
+      <div className="items- flex h-full w-full justify-center bg-gray-950">
+        <DotLoader size={80} color="white" className="mt-20" />
+      </div>
+    );
+  }
+
   return (
     <div className="flex h-full w-full items-center justify-center bg-gray-950">
       <div className="flex flex-col items-center justify-center">
-        <h1 className="text-3xl text-white md:text-6xl  ">Who is watching?</h1>
+        <h1 className="text-3xl text-white md:text-6xl">Who is watching?</h1>
 
         <div
           className={`mt-12 ${profiles.length === 0 ? 'flex' : 'grid grid-cols-2'} items-center justify-center gap-6 md:gap-8 lg:flex`}
         >
           {profiles.map((profile) => (
-            <ProfileCard
-              key={profile.id}
-              name={profile.name}
-              imageSrc={profile.imageSrc}
-              onClick={() => handleProfileClick(profile)}
-            />
+            <button key={profile.id} disabled={isPending}>
+              <ProfileCard
+                name={profile.name}
+                imageSrc={profile.imageSrc}
+                onClick={() => handleProfileClick(profile)}
+              />
+            </button>
           ))}
 
-          {/* Show Add Profile Card if less than 4 profiles */}
-          {profiles.length < 4 && <AddProfileCard onClick={handleOpenModal} />}
+          {/* Show Add Profile Card only if profiles are loaded */}
+          {profiles.length < 4 && !isLoading && (
+            <AddProfileCard onClick={handleOpenModal} />
+          )}
         </div>
 
         {/* Modal for adding profile */}
         <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-          <DialogContent>
+          <DialogContent className="w-auto">
             <DialogHeader>
               <DialogTitle>Create a Profile</DialogTitle>
             </DialogHeader>
@@ -163,6 +182,7 @@ const Profiles = () => {
               <Input
                 id="profileName"
                 type="text"
+                disabled={isPending}
                 value={profileName}
                 onChange={(e) => setProfileName(e.target.value)}
                 placeholder="Enter profile name"
@@ -175,7 +195,7 @@ const Profiles = () => {
                 {predefinedImages.map((image) => (
                   <div
                     key={image}
-                    className={`h-20 w-20 cursor-pointer overflow-hidden rounded-md border-2 ${
+                    className={`h-14 w-14 cursor-pointer overflow-hidden rounded-md border-2 md:h-20 md:w-20 ${
                       selectedImage === image
                         ? 'border-blue-500'
                         : 'border-gray-300'
@@ -197,13 +217,14 @@ const Profiles = () => {
               <Button
                 variant="default"
                 onClick={handleAddProfile}
-                disabled={!profileName || !selectedImage}
+                disabled={!profileName || !selectedImage || isPending}
               >
                 Save
               </Button>
               <Button
                 type="submit"
                 variant="secondary"
+                disabled={isPending}
                 onClick={handleCloseModal}
                 className="cursor-pointer bg-red-600 text-white hover:bg-red-700"
               >

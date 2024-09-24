@@ -5,8 +5,8 @@ import authConfig from './auth.config';
 import { getUserById } from './data/user';
 import { db } from './lib/db';
 
-let userId: string | undefined;
-let email: string | undefined;
+let userId: string;
+let email: string;
 
 export const { auth, handlers, signIn, signOut } = NextAuth({
   callbacks: {

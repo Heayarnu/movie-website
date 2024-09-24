@@ -1,9 +1,12 @@
-import { userId } from '@/auth';
 import { db } from './db';
 
 const DAY_IN_MS = 1000 * 60 * 60 * 24;
 
-export const checkSubscription = async () => {
+interface CheckSubscriptionProps {
+  userId: string;
+}
+
+export const checkSubscription = async ({ userId }: CheckSubscriptionProps) => {
   if (!userId) {
     return false;
   }

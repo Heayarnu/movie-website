@@ -1,4 +1,4 @@
-import { email, userId } from '@/auth';
+import { email } from '@/auth';
 import { currentUser } from '@/lib/auth';
 import { db } from '@/lib/db';
 import { stripe } from '@/lib/stripe';
@@ -28,8 +28,7 @@ export async function POST(req: Request) {
     const { planName, price } = await req.json();
 
     const user = await currentUser();
-    console.log('[USER]', user);
-    console.log('[USER_ID]', userId);
+    const userId = user?.id;
 
     if (!userId || !user) {
       return new NextResponse('Unauthorized', { status: 401 });

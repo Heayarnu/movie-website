@@ -2,7 +2,7 @@
  * An array of public routes that do not require authentication
  * @type {string[]}
  */
-export const publicRoutes = ['/', '/api/webhook'];
+export const publicRoutes = ['/', '/api/webhook', '/api/stripe'];
 
 /**
  * An array of routes that are used for authentication

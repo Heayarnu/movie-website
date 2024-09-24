@@ -88,7 +88,8 @@ const NavBar = () => {
           </Button>
 
           {/* ThemeToggler */}
-          <div className="my-5 flex flex-row ">
+          <div className="my-5 flex flex-row items-center justify-between">
+            <h1 className="text-xl md:text-2xl ">Theme</h1>
             <ThemeToggler />
           </div>
 

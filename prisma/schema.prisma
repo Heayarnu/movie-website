@@ -8,7 +8,8 @@ datasource db {
 }
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
 }
 
 model Account {
@@ -41,8 +42,7 @@ model User {
   email        String?           @unique
   password     String?
   role         UserRole          @default(USER)
-  isActive     Boolean           @default(false)
-  account      Account? // Change to one-to-one relationship
+  account      Account?
   subscription UserSubscription?
   profiles     Profile[]
 
@@ -63,11 +63,11 @@ model UserSubscription {
 }
 
 model Profile {
-  id       Int    @id @default(autoincrement())
+  id       String @id @default(cuid())
   name     String
   imageSrc String
   userId   String
-  user     User   @relation(fields: [userId], references: [id])
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
 }

@@ -52,7 +52,6 @@ export interface FormErrorProps {
 export interface FormSuccessProps {
   message?: any;
 }
-
 export interface CarouselBannerProps {
   id?: string;
   keywords?: string;
@@ -70,7 +69,6 @@ export interface Profile {
   imageSrc: string;
   userId: string;
 }
-
 
 export type Genre = {
   id: number;

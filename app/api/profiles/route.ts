@@ -1,6 +1,7 @@
 import { createProfile, getProfiles } from '@/actions/profile';
 import { currentUser } from '@/lib/auth';
 import { NextResponse } from 'next/server';
+import { useState, useTransition } from 'react';
 
 export async function GET(req: Request) {
   const user = await currentUser();
