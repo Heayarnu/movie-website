@@ -3,8 +3,6 @@
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
-  // uncomment next line if you use Prisma <5.10
-  // directUrl = env("DATABASE_URL_UNPOOLED")
 }
 
 generator client {
@@ -63,11 +61,26 @@ model UserSubscription {
 }
 
 model Profile {
-  id       String @id @default(cuid())
+  id       String   @id @default(cuid())
   name     String
   imageSrc String
   userId   String
-  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  myList   MyList[] // Relation to store liked movies
 
   @@index([userId])
+}
+
+model MyList {
+  id               String  @id @default(cuid())
+  profile          Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  profileId        String
+  movieId          String
+  movieTitle       String
+  movieReleaseDate String
+  moviePosterPath  String
+
+  // Ensure each profile can like a movie only once
+  @@unique([profileId, movieId])
+  @@map("my_list")
 }

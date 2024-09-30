@@ -1,6 +1,6 @@
 'use client';
 
-import { LoginButtonProps } from '@/types';
+import { LoginButtonProps } from '@/types/index';
 import { useRouter } from 'next/navigation';
 
 const LoginButton = ({

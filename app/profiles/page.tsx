@@ -13,6 +13,7 @@ import { Profile, ProfileCardProps } from '@/types/index';
 import { Plus } from 'lucide-react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
+import { setCookie } from 'nookies';
 import { useCallback, useEffect, useState, useTransition } from 'react';
 import { DotLoader } from 'react-spinners';
 
@@ -93,6 +94,11 @@ const Profiles = () => {
   // Handle profile click
   const handleProfileClick = useCallback(
     (profile: Profile) => {
+      // Set profile ID in cookies
+      setCookie(null, 'selectedProfileId', profile.id.toString(), {
+        maxAge: 30 * 24 * 60 * 60, // 30 days
+        path: '/',
+      });
       startTransition(() => {
         router.push('/Home');
       });

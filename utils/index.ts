@@ -1,3 +1,4 @@
+import { db } from '@/lib/db';
 import { Genres, SearchResults } from '@/types';
 
 // Utility function to fetch data from TMDB
@@ -71,7 +72,7 @@ export async function getPopularMovies() {
   return data.results;
 }
 
-export async function getDiscoverMovies(id?: string, keywords?: string) {
+export async function getDiscoverGenre(id?: string, keywords?: string) {
   const url = new URL('https://api.themoviedb.org/3/discover/movie');
   keywords && url.searchParams.set('with_keywords', keywords);
   id && url.searchParams.set('with_genres', id);
@@ -79,6 +80,99 @@ export async function getDiscoverMovies(id?: string, keywords?: string) {
   const data = await fetchFromTMDB(url);
   shuffleArray(data.results);
   return data.results;
+}
+
+export async function getMovieDetails(id: string) {
+  const url = new URL(`https://api.themoviedb.org/3/movie/${id}`);
+  const data = await fetchFromTMDB(url);
+  return data;
+}
+
+export async function getMovieCertification(id: string) {
+  const url = new URL(`https://api.themoviedb.org/3/movie/${id}/release_dates`);
+  const response = await fetch(url.toString(), getFetchOptions());
+  const data = await response.json();
+
+  const usRelease = data.results.find(
+    (release: { iso_3166_1: string }) => release.iso_3166_1 === 'US',
+  );
+
+  return usRelease?.release_dates[0]?.certification;
+}
+
+export async function getMovieVideos(id: string) {
+  const url = `https://api.themoviedb.org/3/movie/${id}/videos?language=en-US`;
+
+  const options = getFetchOptions();
+
+  const response = await fetch(url, options);
+  const data = await response.json();
+
+  // Try to extract the first trailer
+  const trailer = data.results.find(
+    (video: { type: string }) => video.type === 'Trailer',
+  );
+
+  if (trailer) {
+    const trailerKey = trailer.key; // Get the trailer key
+    return `https://www.youtube.com/embed/${trailerKey}`; // Return the trailer URL
+  }
+
+  // If no trailer, try to find the first teaser
+  const teaser = data.results.find(
+    (video: { type: string }) => video.type === 'Teaser',
+  );
+  if (teaser) {
+    const teaserKey = teaser.key; // Get the teaser key
+    return `https://www.youtube.com/embed/${teaserKey}`; // Return the teaser URL
+  }
+
+  // If no teaser, try to find the first clip
+  const clip = data.results.find(
+    (video: { type: string }) => video.type === 'Clip',
+  );
+  if (clip) {
+    const clipKey = clip.key; // Get the clip key
+    return `https://www.youtube.com/embed/${clipKey}`; // Return the clip URL
+  }
+
+  // If no clip, try to find the first featurette
+  const featurette = data.results.find(
+    (video: { type: string }) => video.type === 'Featurette',
+  );
+  if (featurette) {
+    const featuretteKey = featurette.key; // Get the featurette key
+    return `https://www.youtube.com/embed/${featuretteKey}`; // Return the featurette URL
+  }
+
+  console.log('No videos found.');
+  return null; // Return null if no appropriate video is found
+}
+
+export async function getCredits(id: String) {
+  const url = `https://api.themoviedb.org/3/movie/${id}/credits?language=en-US`;
+  const options = getFetchOptions();
+
+  const response = await fetch(url, options);
+
+  const data = await response.json();
+
+  // Extracting director(s), writer(s), and cast names
+  const Director = data.crew
+    .filter((member: { job: string }) => member.job === 'Director')
+    .map((director: { name: any }) => director.name);
+  const Writer = data.crew
+    .filter((member: { job: string }) => member.job === 'Writer')
+    .map((writer: { name: any }) => writer.name);
+  const castNames = data.cast.map(
+    (castMember: { name: any }) => castMember.name,
+  );
+
+  return {
+    Director,
+    Writer,
+    castNames,
+  };
 }
 
 export async function NowPlaying() {
@@ -102,4 +196,24 @@ export const getImagePath = (imagePath?: string, fullsize?: boolean) => {
     : 'https://links.papareact.com/o8z';
 };
 
+export async function getLikedMovies(profileId: string) {
+  if (!profileId) return [];
 
+  const likedMovies = await db.myList.findMany({
+    where: { profileId },
+    select: {
+      movieId: true,
+      movieTitle: true,
+      movieReleaseDate: true,
+      moviePosterPath: true,
+    },
+  });
+
+  // Convert to the format expected by MoviesCarousel
+  return likedMovies.map((movie) => ({
+    id: movie.movieId,
+    title: movie.movieTitle,
+    release_date: movie.movieReleaseDate,
+    poster_path: movie.moviePosterPath,
+  }));
+}

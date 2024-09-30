@@ -1,32 +1,42 @@
 import React from 'react';
 
+// Props for the search page
 export interface SearchProps {
   params: {
     term: string;
   };
 }
 
+// Props for the genre page
 export interface GenreProps {
   params: {
     id: string;
   };
-
   searchParams: {
     genre: string;
   };
 }
 
+export interface NavBarProps {
+  showBackground: boolean;
+  isHome: boolean;
+  profile: Profile;
+}
+
+// Props for a movie carousel component
 export interface MovieCarouselProps {
   title?: string;
   movies: Movie[];
   isVertical?: boolean;
 }
 
+// Props for individual movie card component
 export interface MovieCardProps {
   movie: Movie;
   isVertical?: boolean;
 }
 
+// Props for rows displayed on the home screen
 export interface HomeScreenRowsProps {
   h1: string;
   h2: string;
@@ -34,71 +44,90 @@ export interface HomeScreenRowsProps {
   isReversed?: boolean;
 }
 
+// Props for a disclosures component (e.g., FAQs)
 export interface DisclosuresProps {
   title: string;
   children: string;
 }
 
+// Props for a login button component
 export interface LoginButtonProps {
   children: React.ReactNode;
   mode?: 'modal' | 'redirect';
   asChild?: boolean;
 }
 
+// Props for handling form errors
 export interface FormErrorProps {
-  message?: any;
+  message?: string;
 }
 
+// Props for handling form success messages
 export interface FormSuccessProps {
-  message?: any;
+  message?: string;
 }
+
+// Props for a carousel banner
 export interface CarouselBannerProps {
   id?: string;
   keywords?: string;
 }
 
+// Props for individual profile card component
 export interface ProfileCardProps {
   name: string;
   imageSrc: string;
   onClick: () => void;
 }
 
+// Props for a specific movie page
+export interface MoviePageProps {
+  params: {
+    id: string;
+  };
+}
+
+// Interface for user profile information
 export interface Profile {
-  id: number;
+  id: string;
   name: string;
   imageSrc: string;
   userId: string;
 }
 
-export type Genre = {
+// Genre type
+export interface Genre {
   id: number;
   name: string;
-};
+}
 
-export type Genres = {
+// Type for multiple genres
+export interface Genres {
   genres: Genre[];
-};
+}
 
-export type Movie = {
-  adult: boolean;
+// Movie type definition
+export interface Movie {
+  adult?: boolean;
   backdrop_path?: string;
-  genre_ids: number[];
-  id: number;
-  original_language: string;
-  original_title: string;
-  overview: string;
-  popularity: number;
+  genre_ids?: number[];
+  id: string;
+  original_language?: string;
+  original_title?: string;
+  overview?: string;
+  popularity?: number;
   poster_path?: string;
-  release_date: string;
+  release_date?: string;
   title: string;
-  video: boolean;
-  vote_average: number;
-  vote_count: number;
-};
+  video?: boolean;
+  vote_average?: number;
+  vote_count?: number;
+}
 
-export type SearchResults = {
+// Type for search results
+export interface SearchResults {
   page: number;
   results: Movie[];
   total_pages: number;
   total_results: number;
-};
+}

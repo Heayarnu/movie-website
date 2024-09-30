@@ -1,5 +1,5 @@
 import MoviesCarousel from '@/components/MoviesCarousel';
-import { SearchProps } from '@/types';
+import { SearchProps } from '@/types/index';
 import { getPopularMovies, getSearchMovies } from '@/utils';
 import { notFound } from 'next/navigation';
 import React from 'react';
@@ -13,7 +13,7 @@ async function SearchPage({ params: { term } }: SearchProps) {
   const popularMovies = await getPopularMovies();
 
   return (
-    <div className="lg:max-w-7xl lg:mx-auto relative pt-32">
+    <div className="lg:max-w-7xl lg:mx-auto relative pt-16">
       <div className="flex flex-col space-y-4">
         <div>
           <h1 className="hidden md:block mt-10 text-xl md:text-3xl lg:texte-5xl xl:text:7xl px-6 xl:px-10">

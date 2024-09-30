@@ -1,18 +1,17 @@
 import MoviesCarousel from '@/components/MoviesCarousel';
-import { GenreProps } from '@/types';
-import { getDiscoverMovies } from '@/utils';
-import React from 'react';
+import { GenreProps } from '@/types/index';
+import { getDiscoverGenre } from '@/utils';
 
 async function GenrePage({
   params: { id },
   searchParams: { genre },
 }: GenreProps) {
-  const movies = await getDiscoverMovies(id);
+  const movies = await getDiscoverGenre(id);
 
   return (
-    <div className="mx-auto relative pt-32">
+    <div className="relative mx-auto pt-20">
       <div className="flex flex-col">
-        <h1 className="text-2xl md:text-5xl xl:text:7xl font-semibold px-4 xl:px-10 font-mono ml-5 md:ml-10">
+        <h1 className="xl:text:7xl ml-5 px-4 font-mono text-2xl font-semibold md:ml-10 md:text-5xl xl:px-10">
           {genre}
         </h1>
 

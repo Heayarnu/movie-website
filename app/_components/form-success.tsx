@@ -1,10 +1,10 @@
-import { FormSuccessProps } from '@/types';
+import { FormSuccessProps } from '@/types/index';
 
 const FormSuccess = ({ message }: FormSuccessProps) => {
   if (!message) return null;
 
   return (
-    <div className="bg-emerald-400 my-5 p-3 rounded-md flex text-black items-center gap-x-2 text-base">
+    <div className="my-5 flex items-center gap-x-2 rounded-md bg-emerald-400 p-3 text-base text-black">
       <p>✔️ {message}</p>
     </div>
   );

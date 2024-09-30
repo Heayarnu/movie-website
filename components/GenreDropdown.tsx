@@ -1,6 +1,12 @@
-import { ChevronDownIcon } from 'lucide-react';
+'use client';
+
 import { fetchMovies } from '@/utils';
-import Link from 'next/link';
+import { faX } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { ChevronDownIcon } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { Key, useEffect, useState } from 'react';
+import { Button } from './ui/button';
 import { ScrollArea } from './ui/scroll-area';
 import {
   Sheet,
@@ -11,57 +17,88 @@ import {
   SheetTitle,
   SheetTrigger,
 } from './ui/sheet';
-import { Button } from './ui/button';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faX } from '@fortawesome/free-solid-svg-icons';
 
-async function GenreDropdown() {
-  const data = await fetchMovies();
+interface GenreDropdownProps {
+  showBackground: boolean;
+  isHome: boolean;
+}
+
+const GenreDropdown = ({ showBackground, isHome }: GenreDropdownProps) => {
+  const [genres, setGenres] = useState([]);
+  const router = useRouter();
+
+  useEffect(() => {
+    const fetchGenres = async () => {
+      try {
+        const data = await fetchMovies();
+        setGenres(data.genres);
+      } catch (error) {
+        console.error('Error fetching genres:', error);
+      }
+    };
+
+    fetchGenres();
+  }, []);
+
+  const handleNavigation = (id: string, name: string) => {
+    router.push(`/genre/${id}?genre=${name}`);
+  };
 
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <Button className="absolute mt-[60px] md:mt-[74px] mx-4 z-10 text-white flex justify-center h-8 md:h-auto items-center border lg:text-xl rounded-3xl px-2 md:px-5 bg-transparent hover:bg-zinc-600 bg-slate-500">
+        <Button
+          className={`mt-1 flex h-auto items-center justify-center rounded-3xl border bg-transparent px-2 py-1 text-black hover:bg-zinc-600 md:px-3 lg:text-lg ${
+            isHome || showBackground
+              ? 'border-white text-white'
+              : 'border-black  text-black dark:border-white dark:text-white'
+          }`}
+        >
           Categories <ChevronDownIcon className="ml-2 mt-1" />
         </Button>
       </SheetTrigger>
 
       <SheetContent
         side="top"
-        className="h-screen bg-black/10 flex items-center justify-center"
+        className="flex h-screen items-center justify-center bg-black/10"
       >
         <ScrollArea className="h-[70vh]">
           <SheetHeader>
             <SheetClose asChild>
-              <SheetTitle className="text-white  text-2xl md:text-3xl lg:text-4xl flex justify-center items-center cursor-pointer">
+              <SheetTitle className="flex cursor-pointer items-center justify-center text-2xl text-white md:text-3xl lg:text-4xl">
                 Home
               </SheetTitle>
             </SheetClose>
           </SheetHeader>
 
-          {data.genres.map((genre) => (
+          {genres.map((genre: { id: Key; name: string }) => (
             <div key={genre.id}>
-              <button className="w-full text-white text-lg md:text-2xl lg:text-3xl flex items-center justify-center mt-4 lg:mt-6">
+              <button className="mt-4 flex w-full items-center justify-center text-lg text-white md:text-2xl lg:mt-6 lg:text-3xl">
                 <SheetClose asChild>
-                  <Link href={`/genre/${genre.id}?genre=${genre.name}`}>
+                  <button
+                    key={genre.id}
+                    onClick={() =>
+                      handleNavigation(genre.id.toString(), genre.name)
+                    }
+                  >
                     {genre.name}
-                  </Link>
+                  </button>
                 </SheetClose>
               </button>
             </div>
           ))}
         </ScrollArea>
 
-        <SheetFooter className=" absolute bottom-5 ">
+        <SheetFooter className="absolute bottom-5">
           <SheetClose asChild>
-            <Button className="flex w-16 h-16 bg-white justify-center items-center rounded-full">
-              <FontAwesomeIcon icon={faX} className="text-black text-3xl" />
+            <Button className="flex h-16 w-16 items-center justify-center rounded-full bg-white">
+              <FontAwesomeIcon icon={faX} className="text-3xl text-black" />
             </Button>
           </SheetClose>
         </SheetFooter>
       </SheetContent>
     </Sheet>
   );
-}
+};
 
 export default GenreDropdown;

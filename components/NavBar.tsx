@@ -7,19 +7,20 @@ import {
   SheetHeader,
   SheetTrigger,
 } from '@/components/ui/sheet';
+import { NavBarProps } from '@/types/index';
 import {
   faArrowLeftLong,
   faMagnifyingGlass,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { ChevronDownIcon } from 'lucide-react';
 import Image from 'next/image';
 import { useState } from 'react';
 import SearchInput from './SearchInput';
 import SignOutBtn from './SignOutBtn';
 import { ThemeToggler } from './ThemeToggler';
-import { Button } from './ui/button';
 
-const NavBar = () => {
+const NavBar = ({ showBackground, isHome, profile }: NavBarProps) => {
   const [showSearch, setShowSearch] = useState<boolean>(false);
 
   return (
@@ -42,12 +43,16 @@ const NavBar = () => {
         ) : (
           //  Search button
           <button
-            className="m-2 md:m-4 lg:m-5"
+            className="m-2 text-black md:m-4 lg:m-5 "
             onClick={() => setShowSearch(true)}
           >
             <FontAwesomeIcon
               icon={faMagnifyingGlass}
-              className="ml-4 mr-0.5 text-lg text-white md:text-2xl lg:text-3xl"
+              className={`ml-4 mr-0.5 text-lg md:text-2xl lg:text-3xl ${
+                isHome || showBackground
+                  ? 'text-white'
+                  : 'text-black dark:text-white'
+              }`}
             />{' '}
           </button>
         )}
@@ -59,39 +64,45 @@ const NavBar = () => {
 
       <Sheet>
         <SheetTrigger asChild>
-          <button className="mt-[6px] h-7 w-7 md:mr-5 md:mt-[9px] md:h-10 md:w-10 lg:mt-4">
-            <Image
-              src="/profile.png"
-              alt="profile icon"
-              width={100}
-              height={100}
-              className="rounded-md border"
-            />
+          <button className="m-0 -mr-2">
+            <div className="flex items-center">
+              <Image
+                src={profile.imageSrc}
+                alt="profile icon"
+                width={200}
+                height={100}
+                className="h-7 w-7 rounded-sm object-cover md:h-10 md:w-10"
+              />
+              <ChevronDownIcon
+                className={`m-0 hidden h-5 w-5 font-bold sm:flex lg:h-7 lg:w-7 ${isHome || showBackground ? 'text-white' : 'text-black dark:text-white'}`}
+              />
+            </div>
           </button>
         </SheetTrigger>
 
         <SheetContent className="dark:bg-stone-500">
           <SheetHeader className="mb-5">
-            <Image
-              src="/profile.png"
-              alt="profile icon"
-              width={50}
-              height={50}
-            />
+            <div className="flex flex-row justify-between pr-3">
+              <div className="flex flex-col items-start justify-center">
+                <Image
+                  src={profile.imageSrc}
+                  alt="profile icon"
+                  width={50}
+                  height={50}
+                  className="rounded-md "
+                />
+
+                <h1 className="mt-2 text-xl font-semibold sm:mt-3 sm:text-2xl">
+                  {profile.name}
+                </h1>
+              </div>
+
+              <div className="-mt-12 flex items-center justify-center">
+                {/* ThemeToggler */}
+                <ThemeToggler />
+              </div>
+            </div>
           </SheetHeader>
-
-          <Button
-            variant="ghost"
-            className="flex justify-start px-0 text-2xl font-semibold hover:scale-105 hover:bg-inherit"
-          >
-            My List
-          </Button>
-
-          {/* ThemeToggler */}
-          <div className="my-5 flex flex-row items-center justify-between">
-            <h1 className="text-xl md:text-2xl ">Theme</h1>
-            <ThemeToggler />
-          </div>
 
           <SheetFooter>
             <div className="absolute bottom-10 right-4">

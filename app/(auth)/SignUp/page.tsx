@@ -69,7 +69,9 @@ const Page = () => {
     });
   };
 
-  return (
+  return !email ? (
+    router.push('/')
+  ) : (
     <div className="h-screen bg-white">
       <div className="mx-auto h-full w-full sm:mt-5 sm:w-[470px]">
         <Card className="flex flex-col justify-center border-none bg-transparent px-4 sm:p-7">
@@ -174,6 +176,7 @@ const Page = () => {
                 </p>
 
                 <Button
+                  disabled={isPending}
                   onClick={() => {
                     router.push('/SignUp/planform');
                   }}
