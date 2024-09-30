@@ -118,7 +118,7 @@ const page = async ({ params: { id } }: MoviePageProps) => {
 
           {movie.overview && (
             <div className="mb-1.5 text-lg">
-              <ShowMoreText text={movie.overview} maxRows={3}/>{' '}
+              <ShowMoreText maxLength={170} text={movie.overview} />{' '}
             </div>
           )}
 
@@ -150,10 +150,13 @@ const page = async ({ params: { id } }: MoviePageProps) => {
           )}
 
           {credits.castNames && credits.castNames.length > 0 && (
-            <div className="mb-1.5 text-lg">
+            <p className="mb-1.5 inline text-lg">
               <span className="mr-2 font-medium">Starring:</span>
-              <ShowMoreText maxRows={1} text={credits.castNames.join(', ')} />
-            </div>
+              <ShowMoreText
+                maxLength={120}
+                text={credits.castNames.join(', ')}
+              />
+            </p>
           )}
 
           {movie.production_companies &&

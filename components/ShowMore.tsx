@@ -5,48 +5,50 @@ import { Button } from './ui/button';
 
 interface ShowMoreTextProps {
   text: string;
-  maxRows: number; // Maximum number of rows to display initially
+  maxLength: number; // Maximum length of text to display initially
 }
 
-const ShowMoreText = ({ text, maxRows }: ShowMoreTextProps) => {
+const ShowMoreText = ({ text, maxLength }: ShowMoreTextProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
-  const [isTruncated, setIsTruncated] = useState(false);
-  const textRef = useRef<HTMLDivElement>(null);
+  const textContainerRef = useRef<HTMLSpanElement | null>(null);
+  const previousScrollPositionRef = useRef<number>(0);
+
+  // Determine whether to show truncated or full text
+  const displayedText =
+    isExpanded || text.length <= maxLength
+      ? text
+      : `${text.slice(0, maxLength)}`;
 
   useEffect(() => {
-    if (textRef.current) {
-      const lineHeight = parseFloat(
-        getComputedStyle(textRef.current).lineHeight,
-      );
-      const maxHeight = lineHeight * maxRows;
-      if (textRef.current.scrollHeight > maxHeight) {
-        setIsTruncated(true);
-      }
+    if (isExpanded && textContainerRef.current) {
+      textContainerRef.current.focus();
+    } else if (!isExpanded) {
+      window.scrollTo(0, previousScrollPositionRef.current);
     }
-  }, [text, maxRows]);
+  }, [isExpanded]);
+
+  const handleButtonClick = () => {
+    if (!isExpanded) {
+      previousScrollPositionRef.current = window.scrollY;
+    }
+    setIsExpanded(!isExpanded);
+  };
 
   return (
-    <div className="flex flex-wrap text-lg">
-      <div
-        ref={textRef}
-        style={{
-          maxHeight: isExpanded ? 'none' : `${maxRows * 1.5}em`,
-          overflow: 'hidden',
-        }}
-        className="relative "
-      >
-        {text}
-      </div>
-      {isTruncated && (
-        <Button
-          variant="ghost"
-          onClick={() => setIsExpanded(!isExpanded)}
-          className="ml-1 inline-block p-0 text-lg text-gray-600 hover:bg-transparent dark:text-slate-400"
-        >
-          {isExpanded ? ' Show Less' : '...more'}
-        </Button>
-      )}
-    </div>
+    <span className="text-lg">
+      <span ref={textContainerRef} tabIndex={-1}>
+        {displayedText}
+        {text.length > maxLength && (
+          <Button
+            variant="ghost"
+            onClick={handleButtonClick}
+            className="ml-1 inline-block p-0 text-lg text-gray-600 hover:bg-transparent"
+          >
+            {isExpanded ? ' Show Less' : '...more'}
+          </Button>
+        )}
+      </span>
+    </span>
   );
 };
 
