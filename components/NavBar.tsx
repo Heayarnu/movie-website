@@ -16,9 +16,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ChevronDownIcon } from 'lucide-react';
 import Image from 'next/image';
 import { useState } from 'react';
+import ProfileManager from './ProfileManager';
 import SearchInput from './SearchInput';
 import SignOutBtn from './SignOutBtn';
-import { ThemeToggler } from './ThemeToggler';
 
 const NavBar = ({ showBackground, isHome, profile }: NavBarProps) => {
   const [showSearch, setShowSearch] = useState<boolean>(false);
@@ -82,26 +82,8 @@ const NavBar = ({ showBackground, isHome, profile }: NavBarProps) => {
 
         <SheetContent className="dark:bg-stone-500">
           <SheetHeader className="mb-5">
-            <div className="flex flex-row justify-between pr-3">
-              <div className="flex flex-col items-start justify-center">
-                <Image
-                  src={profile.imageSrc}
-                  alt="profile icon"
-                  width={50}
-                  height={50}
-                  className="rounded-md "
-                />
-
-                <h1 className="mt-2 text-xl font-semibold sm:mt-3 sm:text-2xl">
-                  {profile.name}
-                </h1>
-              </div>
-
-              <div className="-mt-12 flex items-center justify-center">
-                {/* ThemeToggler */}
-                <ThemeToggler />
-              </div>
-            </div>
+            {/* Profile management and Theme toggler */}
+            <ProfileManager profile={profile} />
           </SheetHeader>
 
           <SheetFooter>

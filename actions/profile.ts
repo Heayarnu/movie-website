@@ -37,3 +37,33 @@ export const getProfiles = async (userId: string) => {
     return { error: 'Failed to fetch profiles.' };
   }
 };
+
+export const changeProfileName = async (profileId: string, newName: string) => {
+  try {
+    const profile = await db.profile.update({
+      where: { id: profileId },
+      data: { name: newName },
+    });
+
+    return { profile };
+  } catch (error) {
+    console.error(
+      `Error changing profile name for profileId ${profileId}:`,
+      error,
+    );
+    return { error: 'Failed to change profile name.' };
+  }
+};
+
+export const deleteProfile = async (profileId: string) => {
+  try {
+    await db.profile.delete({
+      where: { id: profileId },
+    });
+
+    return { success: true };
+  } catch (error) {
+    console.error(`Error deleting profile for profileId ${profileId}:`, error);
+    return { error: 'Failed to delete profile.' };
+  }
+};

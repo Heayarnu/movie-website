@@ -10,21 +10,33 @@ import { Button } from './ui/button';
 
 const Header = ({ profile }: any) => {
   const [showBackground, setShowBackground] = useState<boolean>(false);
+  const [showHeader, setShowHeader] = useState<boolean>(true);
+  const [lastScrollY, setLastScrollY] = useState<number>(0);
 
   const router = useRouter();
-
   const pathname = usePathname();
   const isHome = pathname === '/Home';
-
   const bgColor = pathname === '/Home' ? 'bg-transparent ' : '';
 
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 20) {
+      const currentScrollY = window.scrollY;
+
+      if (currentScrollY > 20) {
         setShowBackground(true);
       } else {
         setShowBackground(false);
       }
+
+      if (currentScrollY > lastScrollY && currentScrollY > 100) {
+        // Scrolling down
+        setShowHeader(false);
+      } else {
+        // Scrolling up
+        setShowHeader(true);
+      }
+
+      setLastScrollY(currentScrollY);
     };
 
     window.addEventListener('scroll', handleScroll);
@@ -32,13 +44,13 @@ const Header = ({ profile }: any) => {
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
-  }, []);
+  }, [lastScrollY]);
 
   return (
     <header
-      className={`fixed z-30 flex w-full flex-row items-center justify-between px-5 py-2 ${
+      className={`fixed z-30 flex w-full flex-row items-center justify-between px-5 py-2 transition-transform duration-300 ${
         showBackground ? 'bg-zinc-900/90 text-white hover:text-white ' : bgColor
-      }`}
+      } ${showHeader ? 'translate-y-0' : '-translate-y-full'}`}
     >
       <div className="flex flex-row items-center justify-between">
         <Link

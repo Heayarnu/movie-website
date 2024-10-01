@@ -1,29 +1,16 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+  AddProfileCard,
+  ProfileDialog,
+  useFetchProfiles,
+  useHandleAddProfile,
+  useHandleProfileClick,
+} from '@/components/Profilehandler';
 import { Profile, ProfileCardProps } from '@/types/index';
-import { Plus } from 'lucide-react';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
-import { setCookie } from 'nookies';
-import { useCallback, useEffect, useState, useTransition } from 'react';
+import { useState } from 'react';
 import { DotLoader } from 'react-spinners';
-
-// Predefined profile images
-const predefinedImages = [
-  '/netflix-profile-blue.webp',
-  '/netflix-profile-yellow.webp',
-  '/netflix-profile-red.webp',
-  '/netflix-profile-green.webp',
-];
 
 // ProfileCard component for individual profiles
 const ProfileCard = ({ name, imageSrc, onClick }: ProfileCardProps) => (
@@ -46,98 +33,25 @@ const ProfileCard = ({ name, imageSrc, onClick }: ProfileCardProps) => (
   </div>
 );
 
-// AddProfileCard component for showing the Plus icon
-const AddProfileCard = ({ onClick }: { onClick: () => void }) => (
-  <div
-    onClick={onClick}
-    className="group mx-auto flex w-32 cursor-pointer flex-col items-center justify-center sm:w-36 md:w-44"
-  >
-    <div className="flex h-32 w-32 items-center justify-center overflow-hidden rounded-md border-2 border-dashed border-gray-400 group-hover:border-white sm:h-36 sm:w-36 md:h-44 md:w-44">
-      <Plus className="h-16 w-16 text-gray-400 group-hover:text-white" />
-    </div>
-    <div className="mt-4 text-center text-2xl text-gray-500 group-hover:text-white">
-      Add Profile
-    </div>
-  </div>
-);
 const Profiles = () => {
-  const [profiles, setProfiles] = useState<Profile[]>([]);
   const [profileName, setProfileName] = useState('');
-  const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [error, setError] = useState('');
-  const [isLoading, setIsLoading] = useState(true); // Added loading state
-  const [isPending, startTransition] = useTransition();
-  const router = useRouter();
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Fetch profiles on mount
-  useEffect(() => {
-    const fetchProfiles = async () => {
-      try {
-        const response = await fetch('/api/profiles');
-        const { profiles, error } = await response.json();
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
-        if (error) {
-          setError(error);
-        } else {
-          setProfiles(profiles || []);
-        }
-      } catch (err) {
-        setError('Something went wrong. Please try again.');
-      } finally {
-        setIsLoading(false); // Set loading to false once data is fetched
-      }
-    };
-    fetchProfiles();
-  }, []);
+  const [profiles, setProfiles] = useState<Profile[]>([]);
 
-  // Handle profile click
-  const handleProfileClick = useCallback(
-    (profile: Profile) => {
-      // Set profile ID in cookies
-      setCookie(null, 'selectedProfileId', profile.id.toString(), {
-        maxAge: 30 * 24 * 60 * 60, // 30 days
-        path: '/',
-      });
-      startTransition(() => {
-        router.push('/Home');
-      });
-    },
-    [router],
+  useFetchProfiles(setProfiles, setError, setIsLoading);
+  const handleProfileClick = useHandleProfileClick();
+
+  const { handleAddProfile, isPending } = useHandleAddProfile(
+    profileName,
+    selectedImage || '',
+    setProfiles,
+    setError,
   );
-
-  // Handle profile creation
-  const handleAddProfile = async () => {
-    if (!profileName || !selectedImage) return; // Ensure profile name and image are selected
-
-    startTransition(async () => {
-      try {
-        const response = await fetch('/api/profiles', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            name: profileName,
-            imageSrc: selectedImage,
-          }),
-        });
-
-        if (!response.ok) {
-          throw new Error('Failed to create profile');
-        }
-
-        const profile = await response.json();
-
-        // Successfully created the profile
-        setProfiles((prev) => [...prev, profile]);
-        handleProfileClick(profile);
-      } catch (err) {
-        setError('Something went wrong. Please try again.');
-        console.error('Error:', err);
-      }
-    });
-  };
 
   // Open/close modal
   const handleOpenModal = () => setIsModalOpen(true);
@@ -176,69 +90,17 @@ const Profiles = () => {
           )}
         </div>
 
-        {/* Modal for adding profile */}
-        <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-          <DialogContent className="w-auto">
-            <DialogHeader>
-              <DialogTitle>Create a Profile</DialogTitle>
-            </DialogHeader>
-
-            <div className="space-y-4">
-              <Label htmlFor="profileName">Profile Name</Label>
-              <Input
-                id="profileName"
-                type="text"
-                disabled={isPending}
-                value={profileName}
-                onChange={(e) => setProfileName(e.target.value)}
-                placeholder="Enter profile name"
-              />
-
-              {/* Display predefined images for selection */}
-              <Label>Select a Profile Image</Label>
-
-              <div className="flex space-x-4">
-                {predefinedImages.map((image) => (
-                  <div
-                    key={image}
-                    className={`h-14 w-14 cursor-pointer overflow-hidden rounded-md border-2 md:h-20 md:w-20 ${
-                      selectedImage === image
-                        ? 'border-blue-500'
-                        : 'border-gray-300'
-                    }`}
-                    onClick={() => setSelectedImage(image)}
-                  >
-                    <Image
-                      src={image}
-                      alt="profile-img"
-                      width={80}
-                      height={80}
-                      className="object-cover"
-                    />
-                  </div>
-                ))}
-              </div>
-            </div>
-            <div className="mt-4 flex justify-end space-x-4">
-              <Button
-                variant="default"
-                onClick={handleAddProfile}
-                disabled={!profileName || !selectedImage || isPending}
-              >
-                Save
-              </Button>
-              <Button
-                type="submit"
-                variant="secondary"
-                disabled={isPending}
-                onClick={handleCloseModal}
-                className="cursor-pointer bg-red-600 text-white hover:bg-red-700"
-              >
-                Cancel
-              </Button>
-            </div>
-          </DialogContent>
-        </Dialog>
+        <ProfileDialog
+          isPending={isPending}
+          profileName={profileName}
+          setProfileName={setProfileName}
+          selectedImage={selectedImage || ''}
+          setSelectedImage={setSelectedImage}
+          handleAddProfile={handleAddProfile}
+          handleCloseModal={handleCloseModal}
+          isModalOpen={isModalOpen}
+          setIsModalOpen={setIsModalOpen}
+        />
 
         {error && <div className="mt-4 text-red-500">{error}</div>}
       </div>

@@ -1,5 +1,11 @@
 import MyList from '@/components/MyList';
 import ShowMoreText from '@/components/ShowMore';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 import { db } from '@/lib/db';
 import { MoviePageProps } from '@/types/index';
 import {
@@ -34,6 +40,21 @@ const page = async ({ params: { id } }: MoviePageProps) => {
     const hours = Math.floor(runtime / 60);
     const minutes = runtime % 60;
     return `${hours}h ${minutes}m`;
+  };
+
+  const getMaturityRatingDescription = (rating: string) => {
+    switch (rating) {
+      case 'G':
+        return 'General Audiences';
+      case 'PG':
+        return 'Parental Guidance Suggested';
+      case 'PG-13':
+        return 'Parents Strongly Cautioned';
+      case 'R':
+        return 'Restricted';
+      case 'NC-17':
+        return 'Adults Only';
+    }
   };
 
   const getVoteAverageClass = (voteAverage: number) => {
@@ -87,9 +108,18 @@ const page = async ({ params: { id } }: MoviePageProps) => {
               )}
 
               {maturityRating && (
-                <p className="rounded-md border bg-gray-500 px-1 py-0 text-white">
-                  {maturityRating}
-                </p>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <p className="cursor-pointer rounded-md border bg-gray-500 px-1 py-0 text-white">
+                        {maturityRating}
+                      </p>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>{getMaturityRatingDescription(maturityRating)}</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
               )}
 
               {movie.runtime && (
@@ -101,13 +131,22 @@ const page = async ({ params: { id } }: MoviePageProps) => {
               {movie.vote_average &&
                 movie.vote_average !== 0 &&
                 movie.vote_count >= 100 && (
-                  <p
-                    className={`rounded-md border px-1 py-0 font-medium ${getVoteAverageClass(
-                      movie.vote_average,
-                    )}`}
-                  >
-                    {movie.vote_average.toFixed(2)}
-                  </p>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <p
+                          className={`cursor-pointer rounded-md border px-1 py-0 font-medium ${getVoteAverageClass(
+                            movie.vote_average,
+                          )}`}
+                        >
+                          {movie.vote_average.toFixed(2)}
+                        </p>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Avg Rating</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
                 )}
             </div>
 
