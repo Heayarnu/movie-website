@@ -7,7 +7,6 @@ import {
   getTopRatedMovies,
   getUpcomingMovies,
 } from '@/utils';
-import { cookies } from 'next/headers';
 
 export default async function HomeScreen() {
   // Fetch movies
@@ -15,7 +14,8 @@ export default async function HomeScreen() {
   const topRatedMovies = await getTopRatedMovies();
   const popularMovies = await getPopularMovies();
   // Access cookies server-side
-  const cookieStore = cookies();
+
+  const cookieStore = (await import('next/headers')).cookies();
   const selectedProfileId = cookieStore.get('selectedProfileId')?.value;
 
   // Fetch the selected profile from Prisma

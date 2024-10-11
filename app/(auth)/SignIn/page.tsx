@@ -25,7 +25,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useState, useTransition } from 'react';
 import { useForm } from 'react-hook-form';
-import * as z from 'zod';
+import { z } from 'zod';
 
 const Page = () => {
   const form = useForm<z.infer<typeof LoginSchema>>({

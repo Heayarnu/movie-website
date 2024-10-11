@@ -4,13 +4,10 @@ import MoviesCarousel from '@/components/MoviesCarousel';
 import PaginationSection from '@/components/Pagination';
 import { Movie, SearchProps } from '@/types/index';
 import { getPopularMovies, getSearchMovies } from '@/utils';
-import { notFound } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { FadeLoader } from 'react-spinners';
 
 const SearchPage = ({ params: { term } }: SearchProps) => {
-  if (!term) notFound();
-
   const termToUse = decodeURI(term);
   const [loading, setLoading] = useState(true);
   const [movies, setMovies] = useState<Movie[]>([]);

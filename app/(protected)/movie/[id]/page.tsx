@@ -17,7 +17,6 @@ import {
   getRecommendations,
   getSimilarMovies,
 } from '@/utils';
-import { cookies } from 'next/headers';
 
 const page = async ({ params: { id } }: MoviePageProps) => {
   const movie = await getMovieDetails(id);
@@ -30,7 +29,7 @@ const page = async ({ params: { id } }: MoviePageProps) => {
   const videoUrl = await getMovieVideos(id); // Fetch the trailer URL
 
   // Access cookies server-side
-  const cookieStore = cookies();
+  const cookieStore = (await import('next/headers')).cookies();
   const selectedProfileId = cookieStore.get('selectedProfileId')?.value;
 
   // Fetch the selected profile from Prisma

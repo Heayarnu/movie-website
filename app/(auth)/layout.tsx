@@ -1,4 +1,3 @@
-import React from 'react';
 import Footer from '@/components/Footer';
 
 interface LayoutProps {
@@ -8,7 +7,7 @@ interface LayoutProps {
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   return (
     <div
-      className="bg-cover bg-center relative flex flex-col"
+      className="relative flex flex-col bg-cover bg-center"
       style={{ backgroundImage: "url('/background-image.png')" }}
     >
       <main>{children}</main>

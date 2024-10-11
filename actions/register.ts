@@ -5,7 +5,7 @@ import { getUserByEmail } from '@/data/user';
 import { db } from '@/lib/db';
 import { PasswordSchema } from '@/Schemas';
 import bcrypt from 'bcryptjs';
-import * as z from 'zod';
+import { z } from 'zod';
 
 /**
  * Check if the provided email already exists in the database.

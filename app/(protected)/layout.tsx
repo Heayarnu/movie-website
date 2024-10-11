@@ -5,7 +5,6 @@ import { ThemeProvider } from '@/components/ThemeProvider';
 import { db } from '@/lib/db';
 import { config } from '@fortawesome/fontawesome-svg-core';
 import { PrismaClient } from '@prisma/client';
-import { cookies } from 'next/headers';
 
 config.autoAddCss = false;
 
@@ -18,7 +17,7 @@ export default async function HomeLayout({
   children: React.ReactNode;
 }>) {
   // Access cookies server-side
-  const cookieStore = cookies();
+  const cookieStore = (await import('next/headers')).cookies();
   const selectedProfileId = cookieStore.get('selectedProfileId')?.value;
 
   // Fetch the selected profile from Prisma

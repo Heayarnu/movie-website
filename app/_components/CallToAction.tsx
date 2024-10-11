@@ -1,9 +1,8 @@
 import EmailInput from './EmailInput';
-import React from 'react';
 
 const CallToAction = () => (
   <div className="bg-transparent">
-    <p className="font-semibold text-lg px-4 md:px-16 text-center mt-6 lg:text-xl 2xl:text-2xl text-white">
+    <p className="mt-6 px-4 text-center text-lg font-semibold text-white md:px-16 lg:text-xl 2xl:text-2xl">
       Ready to watch? Enter your email or mobile number to create or restart
       your membership.
     </p>

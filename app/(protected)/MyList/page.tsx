@@ -1,10 +1,9 @@
 import MoviesCarousel from '@/components/MoviesCarousel';
 import { getMyList, getPopularMovies } from '@/utils';
-import { cookies } from 'next/headers';
 
 export default async function MyListPage() {
   // Access cookies server-side
-  const cookieStore = cookies();
+  const cookieStore = (await import('next/headers')).cookies();
   const selectedProfileId = cookieStore.get('selectedProfileId')?.value;
 
   // Fetch liked movies using the utility function

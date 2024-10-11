@@ -2,7 +2,7 @@
 
 import SignUpNav from '@/app/_components/SignUpNav';
 import { SessionProvider, useSession } from 'next-auth/react';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 interface LayoutProps {
   children: React.ReactNode;

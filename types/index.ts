@@ -1,5 +1,3 @@
-import React from 'react';
-
 // Props for the search page
 export interface SearchProps {
   params: {
