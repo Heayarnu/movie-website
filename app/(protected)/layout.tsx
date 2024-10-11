@@ -37,7 +37,7 @@ export default async function HomeLayout({
         disableTransitionOnChange
       >
         {/* Pass selectedProfile to the Header, if needed */}
-        <Header profile={selectedProfile} />
+        {selectedProfile && <Header profile={selectedProfile} />}
 
         {/* Provide Redux context */}
         <ReduxProvider>{children}</ReduxProvider>

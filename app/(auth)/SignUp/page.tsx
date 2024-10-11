@@ -69,6 +69,11 @@ const Page = () => {
     });
   };
 
+  const handleClick = () => {
+    setLoading(true);
+    router.push('/SignUp/planform');
+  };
+
   return !email ? (
     router.push('/')
   ) : (
@@ -176,7 +181,7 @@ const Page = () => {
                 </p>
 
                 <Button
-                  disabled={isPending}
+                  disabled={loading}
                   onClick={() => {
                     router.push('/SignUp/planform');
                   }}

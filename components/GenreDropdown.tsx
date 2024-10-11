@@ -1,7 +1,7 @@
 'use client';
 
 import { fetchMovies } from '@/utils';
-import { faX } from '@fortawesome/free-solid-svg-icons';
+import { faTag, faX } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ChevronDownIcon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
@@ -21,9 +21,16 @@ import {
 interface GenreDropdownProps {
   showBackground: boolean;
   isHome: boolean;
+  setIsSheetOpen: (arg0: boolean) => void;
+  isSheetOpen?: boolean;
 }
 
-const GenreDropdown = ({ showBackground, isHome }: GenreDropdownProps) => {
+const GenreDropdown = ({
+  showBackground,
+  isHome,
+  isSheetOpen,
+  setIsSheetOpen,
+}: GenreDropdownProps) => {
   const [genres, setGenres] = useState([]);
   const router = useRouter();
 
@@ -48,13 +55,21 @@ const GenreDropdown = ({ showBackground, isHome }: GenreDropdownProps) => {
     <Sheet>
       <SheetTrigger asChild>
         <Button
-          className={`mt-1 flex h-auto items-center justify-center rounded-3xl border bg-transparent px-2 py-1 text-black hover:bg-zinc-600 md:px-3 lg:text-lg ${
-            isHome || showBackground
-              ? 'border-white text-white'
-              : 'border-black  text-black dark:border-white dark:text-white'
+          className={`mt-1 flex h-auto flex-row items-center justify-center rounded-3xl bg-transparent p-0 text-2xl text-black hover:bg-transparent sm:border sm:px-2 sm:py-1 sm:text-base   md:px-3 lg:text-lg ${
+            isSheetOpen
+              ? 'text-black dark:text-white'
+              : isHome || showBackground
+                ? 'border-white text-white sm:hover:bg-zinc-600'
+                : 'border-black text-black dark:border-white dark:text-white sm:hover:bg-slate-200 sm:dark:hover:bg-zinc-600'
           }`}
         >
-          Categories <ChevronDownIcon className="ml-2 mt-1" />
+          <div className="flex sm:hidden">
+            <FontAwesomeIcon icon={faTag} className="mr-5  pl-0 pt-2 " />
+          </div>
+          <span>Categories</span>
+          <div className="hidden sm:flex">
+            <ChevronDownIcon className="ml-2 mt-0.5" />
+          </div>
         </Button>
       </SheetTrigger>
 
@@ -77,9 +92,10 @@ const GenreDropdown = ({ showBackground, isHome }: GenreDropdownProps) => {
                 <SheetClose asChild>
                   <button
                     key={genre.id}
-                    onClick={() =>
-                      handleNavigation(genre.id.toString(), genre.name)
-                    }
+                    onClick={() => {
+                      handleNavigation(genre.id.toString(), genre.name);
+                      setIsSheetOpen(false);
+                    }}
                   >
                     {genre.name}
                   </button>

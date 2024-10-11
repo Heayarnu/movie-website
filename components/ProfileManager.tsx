@@ -5,14 +5,13 @@ import {
   ChangeProfileNameDialog,
   DeleteProfileDialog,
   ProfileDialog,
-  useFetchProfiles,
   useHandleAddProfile,
   useHandleProfileClick,
 } from '@/components/Profilehandler';
 import { Profile } from '@/types/index';
 import { ChevronsUpDownIcon, MoreHorizontal, Pen, Trash } from 'lucide-react';
 import Image from 'next/image';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { ThemeToggler } from './ThemeToggler';
 import {
   Collapsible,
@@ -35,11 +34,23 @@ import {
   TooltipTrigger,
 } from './ui/tooltip';
 
-export const ProfileManager = ({ profile }: { profile: Profile }) => {
-  const [profiles, setProfiles] = useState<Profile[]>([]);
+interface ProfileManagerProps {
+  profile: Profile;
+  profiles: Profile[];
+  setProfiles: React.Dispatch<React.SetStateAction<Profile[]>>;
+  isLoading: boolean;
+  setIsProfileOpen: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+export const ProfileManager = ({
+  profile,
+  profiles,
+  setProfiles,
+  isLoading,
+  setIsProfileOpen,
+}: ProfileManagerProps) => {
   useState<string | null>(null);
   const [error, setError] = useState('');
-  const [isLoading, setIsLoading] = useState(true);
   const [profileName, setProfileName] = useState('');
   const [isOpen, setIsOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -79,7 +90,6 @@ export const ProfileManager = ({ profile }: { profile: Profile }) => {
     window.location.reload();
   };
 
-  useFetchProfiles(setProfiles, setError, setIsLoading);
   const handleProfileClick = useHandleProfileClick();
 
   const { handleAddProfile, isPending } = useHandleAddProfile(
@@ -88,12 +98,6 @@ export const ProfileManager = ({ profile }: { profile: Profile }) => {
     setProfiles,
     setError,
   );
-
-  const filteredProfiles = profiles.filter((p) => p.name !== profile.name);
-
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
 
   return (
     <div className="flex flex-col pr-3">
@@ -122,11 +126,14 @@ export const ProfileManager = ({ profile }: { profile: Profile }) => {
         </div>
         <CollapsibleContent>
           <div className="mt-2 border-b border-gray-400" />
-          {filteredProfiles.map((p, index) => (
+          {profiles.map((p, index) => (
             <div key={index} className="flex items-center justify-between pt-4">
               <button
                 className="flex items-center justify-start text-lg transition-all duration-100 sm:hover:scale-105"
-                onClick={() => handleProfileClick(p)}
+                onClick={() => {
+                  handleProfileClick(p);
+                  setIsProfileOpen(false);
+                }}
               >
                 <Image
                   src={p.imageSrc}
@@ -177,6 +184,7 @@ export const ProfileManager = ({ profile }: { profile: Profile }) => {
                       profileId={profileToDelete}
                       onClose={handleCloseDeleteDialog}
                       onDeleteSuccess={handleDeleteSuccess}
+                      setIsProfileOpen={setIsProfileOpen}
                     />
                   )}
 
@@ -188,6 +196,7 @@ export const ProfileManager = ({ profile }: { profile: Profile }) => {
                         oldName={oldProfileName}
                         onClose={handleCloseChangeNameDialog}
                         onChangeSuccess={handleChangeSuccess}
+                        setIsProfileOpen={setIsProfileOpen}
                       />
                     )}
                 </Tooltip>
@@ -209,6 +218,7 @@ export const ProfileManager = ({ profile }: { profile: Profile }) => {
                 handleCloseModal={handleCloseModal}
                 isModalOpen={isModalOpen}
                 setIsModalOpen={setIsModalOpen}
+                setIsProfileOpen={setIsProfileOpen}
               />
             </div>
           )}

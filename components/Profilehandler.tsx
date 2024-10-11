@@ -115,6 +115,119 @@ export const useHandleAddProfile = (
   return { handleAddProfile, isPending };
 };
 
+// AddProfileCard component for showing the Plus icon
+export const AddProfileCard = ({ onClick }: { onClick: () => void }) => {
+  const router = useRouter();
+  const pathname = usePathname();
+  const isProfilesPage = pathname === '/profiles';
+
+  return (
+    <div
+      onClick={onClick}
+      className={` group cursor-pointer  ${
+        isProfilesPage
+          ? 'mx-auto flex w-32 flex-col items-center justify-center sm:w-36 md:w-44'
+          : 'flex flex-row items-center justify-start'
+      }`}
+    >
+      <div
+        className={`${
+          isProfilesPage
+            ? 'flex h-32 w-32 items-center justify-center overflow-hidden rounded-md border-2 border-dashed border-gray-400 sm:h-36 sm:w-36 sm:group-hover:border-white md:h-44 md:w-44'
+            : 'flex border-none text-black transition-all duration-100  sm:group-hover:scale-105'
+        }`}
+      >
+        <Plus
+          className={`${
+            isProfilesPage
+              ? 'h-16 w-16 text-gray-400 group-hover:text-white'
+              : 'h-8 w-8 text-black transition-all duration-100 dark:text-white sm:group-hover:scale-105'
+          }`}
+        />
+      </div>
+      <div
+        className={`text-gray-500 ${
+          isProfilesPage
+            ? 'mt-4 text-center text-2xl group-hover:text-white'
+            : 'ml-4 text-start text-lg font-medium text-black transition-all duration-100 dark:text-white sm:group-hover:scale-105'
+        }`}
+      >
+        Add Profile
+      </div>
+    </div>
+  );
+};
+
+export const deleteProfile = async (profileId: string) => {
+  try {
+    const response = await fetch(`/api/profiles`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ profileId }),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to delete profile');
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Error deleting profile:', error);
+    return { error: (error as Error).message };
+  }
+};
+
+export const changeProfileName = async (profileId: string, newName: string) => {
+  try {
+    const response = await fetch(`/api/profiles`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ profileId, newName }),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to change profile name');
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Error changing profile name:', error);
+    return { error: (error as Error).message };
+  }
+};
+
+interface ProfileDialogProps {
+  isModalOpen: boolean;
+  setIsModalOpen: (isOpen: boolean) => void;
+  isPending: boolean;
+  profileName: string;
+  setProfileName: (name: string) => void;
+  selectedImage: string;
+  setSelectedImage: (image: string) => void;
+  handleAddProfile: () => void;
+  handleCloseModal: () => void;
+  setIsProfileOpen?: (isOpen: boolean) => void;
+}
+
+interface DeleteProfileDialogProps {
+  profileId: string;
+  onClose: () => void;
+  onDeleteSuccess: () => void;
+  setIsProfileOpen: (isOpen: boolean) => void;
+}
+
+interface ChangeProfileNameDialogProps {
+  profileId: string;
+  oldName: string;
+  onClose: () => void;
+  onChangeSuccess: () => void;
+  setIsProfileOpen: (isOpen: boolean) => void;
+}
+
 export function ProfileDialog({
   profileName,
   setProfileName,
@@ -125,6 +238,7 @@ export function ProfileDialog({
   isModalOpen,
   setIsModalOpen,
   isPending,
+  setIsProfileOpen,
 }: ProfileDialogProps & { isPending: boolean }) {
   // Predefined profile images
   const predefinedImages = [
@@ -180,7 +294,10 @@ export function ProfileDialog({
         <div className="mt-4 flex justify-end space-x-4">
           <Button
             variant="default"
-            onClick={handleAddProfile}
+            onClick={() => {
+              handleAddProfile();
+              setIsProfileOpen && setIsProfileOpen(false);
+            }}
             disabled={
               !profileName ||
               profileName.length < 3 ||
@@ -205,113 +322,75 @@ export function ProfileDialog({
   );
 }
 
-// AddProfileCard component for showing the Plus icon
-export const AddProfileCard = ({ onClick }: { onClick: () => void }) => {
-  const router = useRouter();
-  const pathname = usePathname();
-  const isProfilesPage = pathname === '/profiles';
+export const ChangeProfileNameDialog: React.FC<
+  ChangeProfileNameDialogProps
+> = ({ profileId, oldName, onClose, onChangeSuccess, setIsProfileOpen }) => {
+  const [newName, setNewName] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleChangeName = async () => {
+    setIsLoading(true);
+    const result = await changeProfileName(profileId, newName);
+    setIsLoading(false);
+
+    if (!result.error) {
+      onChangeSuccess();
+      onClose();
+    } else {
+      alert(result.error);
+    }
+  };
 
   return (
-    <div
-      onClick={onClick}
-      className={` group cursor-pointer  ${
-        isProfilesPage
-          ? 'mx-auto flex w-32 flex-col items-center justify-center sm:w-36 md:w-44'
-          : 'flex flex-row items-center justify-start'
-      }`}
-    >
-      <div
-        className={`${
-          isProfilesPage
-            ? 'flex h-32 w-32 items-center justify-center overflow-hidden rounded-md border-2 border-dashed border-gray-400 sm:h-36 sm:w-36 sm:group-hover:border-white md:h-44 md:w-44'
-            : 'flex border-none text-black transition-all duration-100  sm:group-hover:scale-105'
-        }`}
-      >
-        <Plus
-          className={`${
-            isProfilesPage
-              ? 'h-16 w-16 text-gray-400 group-hover:text-white'
-              : 'h-8 w-8 text-black transition-all duration-100 dark:text-white sm:group-hover:scale-105'
-          }`}
-        />
-      </div>
-      <div
-        className={`text-gray-500 ${
-          isProfilesPage
-            ? 'mt-4 text-center text-2xl group-hover:text-white'
-            : 'ml-4 text-start text-lg font-medium text-black transition-all duration-100 dark:text-white sm:group-hover:scale-105'
-        }`}
-      >
-        Add Profile
-      </div>
-    </div>
+    <Dialog open onOpenChange={onClose}>
+      <DialogContent className="max-w-[90%] rounded-md sm:max-w-[60%] lg:max-w-[40%]">
+        <DialogHeader>
+          <DialogTitle>Change Profile Name</DialogTitle>
+          <DialogDescription>
+            <Input
+              type="text"
+              value={newName}
+              onKeyDown={(e) => {
+                if (
+                  e.key === 'Enter' &&
+                  !isLoading &&
+                  newName.length >= 3 &&
+                  newName !== oldName
+                ) {
+                  handleChangeName();
+                }
+              }}
+              onChange={(e) => setNewName(e.target.value)}
+              placeholder="Enter new name"
+              className="mt-2 text-lg text-black dark:text-white"
+            />
+          </DialogDescription>
+        </DialogHeader>
+        <DialogFooter className="flex flex-row justify-end gap-2">
+          <Button variant="destructive" onClick={onClose} disabled={isLoading}>
+            Cancel
+          </Button>
+          <Button
+            onClick={() => {
+              handleChangeName();
+              setIsProfileOpen(false);
+            }}
+            disabled={isLoading || newName.length < 3 || newName === oldName}
+            className="bg-green-700 text-white hover:bg-green-600"
+          >
+            Save
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 };
-
-interface ProfileDialogProps {
-  isModalOpen: boolean;
-  setIsModalOpen: (isOpen: boolean) => void;
-  isPending: boolean;
-  profileName: string;
-  setProfileName: (name: string) => void;
-  selectedImage: string;
-  setSelectedImage: (image: string) => void;
-  handleAddProfile: () => void;
-  handleCloseModal: () => void;
-}
-
-export const deleteProfile = async (profileId: string) => {
-  try {
-    const response = await fetch(`/api/profiles`, {
-      method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ profileId }),
-    });
-
-    if (!response.ok) {
-      throw new Error('Failed to delete profile');
-    }
-
-    return await response.json();
-  } catch (error) {
-    console.error('Error deleting profile:', error);
-    return { error: (error as Error).message };
-  }
-};
-
-export const changeProfileName = async (profileId: string, newName: string) => {
-  try {
-    const response = await fetch(`/api/profiles`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ profileId, newName }),
-    });
-
-    if (!response.ok) {
-      throw new Error('Failed to change profile name');
-    }
-
-    return await response.json();
-  } catch (error) {
-    console.error('Error changing profile name:', error);
-    return { error: (error as Error).message };
-  }
-};
-
-interface DeleteProfileDialogProps {
-  profileId: string;
-  onClose: () => void;
-  onDeleteSuccess: () => void;
-}
 
 export const DeleteProfileDialog: React.FC<DeleteProfileDialogProps> = ({
   profileId,
   onClose,
   onDeleteSuccess,
+  setIsProfileOpen,
 }) => {
   const [isLoading, setIsLoading] = useState(false);
 
@@ -347,68 +426,13 @@ export const DeleteProfileDialog: React.FC<DeleteProfileDialogProps> = ({
           </Button>
           <Button
             variant="destructive"
-            onClick={handleDelete}
+            onClick={() => {
+              handleDelete();
+              setIsProfileOpen(false);
+            }}
             disabled={isLoading}
           >
             Delete
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
-  );
-};
-
-interface ChangeProfileNameDialogProps {
-  profileId: string;
-  oldName: string;
-  onClose: () => void;
-  onChangeSuccess: () => void;
-}
-
-export const ChangeProfileNameDialog: React.FC<
-  ChangeProfileNameDialogProps
-> = ({ profileId, oldName, onClose, onChangeSuccess }) => {
-  const [newName, setNewName] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-
-  const handleChangeName = async () => {
-    setIsLoading(true);
-    const result = await changeProfileName(profileId, newName);
-    setIsLoading(false);
-
-    if (!result.error) {
-      onChangeSuccess();
-      onClose();
-    } else {
-      alert(result.error);
-    }
-  };
-
-  return (
-    <Dialog open onOpenChange={onClose}>
-      <DialogContent className="max-w-[90%] rounded-md sm:max-w-[60%] lg:max-w-[40%]">
-        <DialogHeader>
-          <DialogTitle>Change Profile Name</DialogTitle>
-          <DialogDescription>
-            <Input
-              type="text"
-              value={newName}
-              onChange={(e) => setNewName(e.target.value)}
-              placeholder="Enter new name"
-              className="mt-2 text-lg text-black dark:text-white"
-            />
-          </DialogDescription>
-        </DialogHeader>
-        <DialogFooter className="flex flex-row justify-end gap-2">
-          <Button variant="destructive" onClick={onClose} disabled={isLoading}>
-            Cancel
-          </Button>
-          <Button
-            onClick={handleChangeName}
-            disabled={isLoading || newName.length < 3 || newName === oldName}
-            className="bg-green-700 text-white hover:bg-green-600"
-          >
-            Save
           </Button>
         </DialogFooter>
       </DialogContent>

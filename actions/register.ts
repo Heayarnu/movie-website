@@ -57,7 +57,7 @@ export const register = async (
   // Create the user in the database
   await db.user.create({
     data: {
-      email,
+      email: email.toLowerCase(),
       password: hashedPassword,
     },
   });

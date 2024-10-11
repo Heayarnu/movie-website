@@ -20,6 +20,7 @@ export const checkSubscription = async ({ userId }: CheckSubscriptionProps) => {
       stripeCurrentPeriodEnd: true,
       stripeCustomerId: true,
       stripePriceId: true,
+      status: true,
     },
   });
 
@@ -29,6 +30,7 @@ export const checkSubscription = async ({ userId }: CheckSubscriptionProps) => {
 
   const isValid =
     userSubscription.stripePriceId &&
+    userSubscription.status === 'active' &&
     userSubscription.stripeCurrentPeriodEnd?.getTime()! + DAY_IN_MS >
       Date.now();
 

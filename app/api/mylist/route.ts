@@ -5,13 +5,13 @@ export async function POST(req: Request) {
   const { profileId, movie } = await req.json(); // Use `req.json()` to parse the incoming JSON
 
   // Validate input
-  if ( 
+  if (
     !profileId ||
     !movie ||
     !movie.id ||
     !movie.title ||
     !movie.release_date ||
-    !movie.poster_path 
+    !movie.poster_path
   ) {
     return new Response(
       JSON.stringify({

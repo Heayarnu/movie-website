@@ -1,3 +1,4 @@
+import MoviesCarousel from '@/components/MoviesCarousel';
 import MyList from '@/components/MyList';
 import ShowMoreText from '@/components/ShowMore';
 import {
@@ -10,16 +11,19 @@ import { db } from '@/lib/db';
 import { MoviePageProps } from '@/types/index';
 import {
   getCredits,
-  getImagePath,
   getMovieCertification,
   getMovieDetails,
   getMovieVideos,
+  getRecommendations,
+  getSimilarMovies,
 } from '@/utils';
 import { cookies } from 'next/headers';
-import Image from 'next/image';
 
 const page = async ({ params: { id } }: MoviePageProps) => {
   const movie = await getMovieDetails(id);
+
+  const similarMovies = await getSimilarMovies(id);
+  const recommendations = await getRecommendations(id);
   const maturityRating = await getMovieCertification(id);
   const credits = await getCredits(id);
 
@@ -68,33 +72,23 @@ const page = async ({ params: { id } }: MoviePageProps) => {
   };
 
   return (
-    <div className="flex p-2 py-10 sm:p-5 xl:pl-10 ">
-      <div className="grid w-full pt-[40px] sm:pt-[65px] xl:grid-cols-[2fr_1fr] xl:gap-10 xl:pt-[85px]">
+    <div className="flex flex-col p-2 py-10 sm:p-5 xl:pl-10 ">
+      <div className="flex w-full flex-col pt-[40px] sm:pt-[65px] xl:grid xl:grid-cols-[2fr_1fr] xl:gap-10 xl:pt-[95px]">
         <div className="flex w-full">
-          {videoUrl ? (
+          {videoUrl && (
             <iframe
               src={videoUrl}
               title="YouTube video player"
-              frameBorder="0"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
               className="h-[350px] w-full items-center justify-center sm:h-[400px] xl:h-[550px]"
             ></iframe>
-          ) : (
-            <Image
-              src={getImagePath(movie.backdrop_path || movie.poster_path)}
-              alt={movie.title}
-              key={movie.id}
-              width={1920}
-              height={1080}
-              className="pt-24"
-            />
           )}
         </div>
 
         <div className="flex flex-col">
           {movie.title && (
-            <h1 className="mb-2 mt-2 text-3xl font-bold sm:mb-3 sm:mt-4 lg:text-5xl xl:mb-4">
+            <h1 className="mb-2 mt-2 text-3xl font-bold sm:mb-3 sm:mt-4 lg:text-5xl xl:-mt-2 xl:mb-4">
               {movie.title}
             </h1>
           )}
@@ -218,6 +212,29 @@ const page = async ({ params: { id } }: MoviePageProps) => {
               </p>
             )}
         </div>
+
+        <div className="mt-5 flex flex-col items-center  justify-center space-y-5 xl:hidden">
+          {recommendations.length !== 0 && (
+            <MoviesCarousel
+              movies={recommendations}
+              title="Recommended Movies"
+            />
+          )}
+
+          {similarMovies.length !== 0 && (
+            <MoviesCarousel movies={similarMovies} title="Similar Movies" />
+          )}
+        </div>
+      </div>
+
+      <div className="mt-20 hidden space-y-5 xl:-ml-7 xl:flex xl:flex-col xl:items-center xl:justify-start">
+        {recommendations.length !== 0 && (
+          <MoviesCarousel movies={recommendations} title="Recommended Movies" />
+        )}
+
+        {similarMovies.length !== 0 && (
+          <MoviesCarousel movies={similarMovies} title="Similar Movies" />
+        )}
       </div>
     </div>
   );

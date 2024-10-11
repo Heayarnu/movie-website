@@ -1,10 +1,11 @@
 import { NowPlaying } from '@/utils';
 import Carouselbanner from './Carouselbanner';
+import { Profile } from '@prisma/client';
 
 async function CarouselBannerWrapper({
   selectedProfile,
 }: {
-  selectedProfile: any;
+  selectedProfile: Profile;
 }) {
   const movies = await NowPlaying();
 

@@ -1,3 +1,4 @@
+// api/webhook.ts
 import { db } from '@/lib/db';
 import { stripe } from '@/lib/stripe';
 import { NextResponse } from 'next/server';
@@ -30,16 +31,22 @@ const handleCheckoutSessionCompleted = async (
       throw new Error('User ID is required');
     }
 
-    // Store subscription data in the database
+    const { videoQuality, price, planName } = session.metadata;
+
     await db.userSubscription.create({
       data: {
         userId: session.metadata.userId,
+        status: subscription.status,
         stripeSubscriptionId: subscription.id,
         stripeCustomerId: subscription.customer as string,
         stripePriceId: subscription.items.data[0].price.id,
         stripeCurrentPeriodEnd: new Date(
           subscription.current_period_end * 1000,
         ),
+        videoQuality,
+        planPrice: price,
+        planName,
+        cancelAtCurrentPeriodEnd: subscription.cancel_at_period_end,
       },
     });
   } catch (error: any) {
@@ -56,16 +63,15 @@ const handleInvoicePaymentSucceeded = async (
       session.subscription as string,
     );
 
-    // Update the subscription in the database
     await db.userSubscription.update({
-      where: {
-        stripeSubscriptionId: subscription.id,
-      },
+      where: { stripeSubscriptionId: subscription.id },
       data: {
         stripePriceId: subscription.items.data[0].price.id,
         stripeCurrentPeriodEnd: new Date(
           subscription.current_period_end * 1000,
         ),
+        status: subscription.status,
+        cancelAtCurrentPeriodEnd: subscription.cancel_at_period_end,
       },
     });
   } catch (error: any) {
@@ -74,17 +80,55 @@ const handleInvoicePaymentSucceeded = async (
   }
 };
 
-const handleSubscriptionDeleted = async (subscription: Stripe.Subscription) => {
+const handleSubscriptionUpdated = async (subscription: Stripe.Subscription) => {
   try {
-    // Delete the subscription from the database
-    await db.userSubscription.delete({
-      where: {
-        stripeSubscriptionId: subscription.id,
-      },
-    });
-  } catch (error: any) {
-    console.error('Error in handleSubscriptionDeleted:', error);
-    throw error;
+    const { action, planPrice, planName, videoQuality } = subscription.metadata;
+
+    // Update the database based on the action
+    switch (action) {
+      case 'upgrade':
+        await db.userSubscription.update({
+          where: { stripeSubscriptionId: subscription.id },
+          data: {
+            planName: planName,
+            planPrice: planPrice,
+            videoQuality: videoQuality,
+            stripePriceId: subscription.items.data[0].price.id,
+            status: subscription.status,
+            stripeCurrentPeriodEnd: new Date(
+              subscription.current_period_end * 1000,
+            ),
+            cancelAtCurrentPeriodEnd: subscription.cancel_at_period_end,
+          },
+        });
+        break;
+
+      case 'cancel':
+      case 'resume':
+        await db.userSubscription.update({
+          where: { stripeSubscriptionId: subscription.id },
+          data: {
+            status: subscription.status,
+            cancelAtCurrentPeriodEnd: subscription.cancel_at_period_end,
+          },
+        });
+        break;
+
+      default:
+        console.warn(`Unrecognized action: ${action}`);
+        return NextResponse.json(
+          { error: 'Unrecognized action' },
+          { status: 400 },
+        );
+    }
+
+    return NextResponse.json(
+      { message: 'Subscription updated successfully' },
+      { status: 200 },
+    );
+  } catch (error) {
+    console.error('Error in handleSubscriptionUpdated:', error);
+    return NextResponse.json({ error: 'Internal error' }, { status: 500 });
   }
 };
 
@@ -100,11 +144,8 @@ export async function POST(req: Request) {
       case 'invoice.payment_succeeded':
         await handleInvoicePaymentSucceeded(session);
         break;
-      case 'customer.subscription.deleted':
-        await handleSubscriptionDeleted(
-          event.data.object as Stripe.Subscription,
-        );
-        break;
+      case 'customer.subscription.updated':
+        handleSubscriptionUpdated(event.data.object as Stripe.Subscription);
     }
 
     return new NextResponse(null, { status: 200 });

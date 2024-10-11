@@ -10,12 +10,13 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import MyList from './MyList';
 import { Button } from './ui/button';
+import { Profile } from '@prisma/client';
 
 Autoplay.globalOptions = { delay: 8000 };
 
 interface CarouselBannerProps {
   movies: Movie[];
-  selectedProfile: any;
+  selectedProfile: Profile;
 }
 
 const Carouselbanner = ({ movies, selectedProfile }: CarouselBannerProps) => {

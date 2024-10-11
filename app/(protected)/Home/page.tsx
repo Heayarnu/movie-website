@@ -2,7 +2,7 @@ import CarouselBannerWrapper from '@/components/CarouselBannerWrapper';
 import MoviesCarousel from '@/components/MoviesCarousel';
 import { db } from '@/lib/db';
 import {
-  getLikedMovies,
+  getMyList,
   getPopularMovies,
   getTopRatedMovies,
   getUpcomingMovies,
@@ -27,12 +27,14 @@ export default async function HomeScreen() {
 
   // Fetch liked movies using the utility function
   const likedMovies = selectedProfileId
-    ? await getLikedMovies(selectedProfileId)
+    ? await getMyList(selectedProfileId)
     : [];
 
   return (
     <div>
-      <CarouselBannerWrapper selectedProfile={selectedProfile} />
+      {selectedProfile && (
+        <CarouselBannerWrapper selectedProfile={selectedProfile} />
+      )}
 
       <div className="flex flex-col space-y-2">
         <MoviesCarousel movies={upComingMovies} title="Upcoming" />

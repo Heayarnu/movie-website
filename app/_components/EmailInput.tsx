@@ -1,8 +1,8 @@
-import { Input } from '../../components/ui/input';
-import { Button } from '../../components/ui/button';
-import { ChevronRight } from 'lucide-react';
-import { useRouter } from 'next/navigation';
 import { setEmail } from '@/Redux/emailReducer';
+import { useAppDispatch, useAppSelector } from '@/Redux/hooks';
+import { EmailSchema } from '@/Schemas';
+import { checkEmailExists } from '@/actions/register';
+import Loader from '@/components/Loader';
 import {
   Form,
   FormControl,
@@ -10,15 +10,15 @@ import {
   FormItem,
   FormMessage,
 } from '@/components/ui/form';
-import { useForm } from 'react-hook-form';
-import { EmailSchema } from '@/Schemas';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { ChevronRight } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import { useState, useTransition } from 'react';
+import { useForm } from 'react-hook-form';
 import * as z from 'zod';
-import { useAppDispatch, useAppSelector } from '@/Redux/hooks';
-import { checkEmailExists } from '@/actions/register';
+import { Button } from '../../components/ui/button';
+import { Input } from '../../components/ui/input';
 import FormError from './form-error';
-import Loader from '@/components/Loader';
 
 const EmailInput = () => {
   const router = useRouter();
@@ -48,7 +48,7 @@ const EmailInput = () => {
 
     startTransition(async () => {
       if (isValid) {
-        const result = await checkEmailExists(email);
+        const result = await checkEmailExists(email.toLowerCase());
 
         if (result.success) {
           router.push('/SignUp');
@@ -65,7 +65,7 @@ const EmailInput = () => {
     <div>
       <Form {...form}>
         <form onSubmit={handleSubmit(onSubmit)}>
-          <div className="flex flex-col sm:flex-row items-center sm:items-start justify-center m-3">
+          <div className="m-3 flex flex-col items-center justify-center sm:flex-row sm:items-start">
             <div>
               <FormField
                 control={form.control}
@@ -77,11 +77,11 @@ const EmailInput = () => {
                         {...field}
                         disabled={isPending}
                         onChange={(e) => {
-                          dispatch(setEmail(e.target.value));
+                          dispatch(setEmail(e.target.value.toLowerCase()));
                           field.onChange(e);
                         }}
                         type="email"
-                        className="w-60 sm:w-72 md:w-96 h-14 mt-5 mb-2 rounded bg-gray-200/10 border-white text-white text-lg "
+                        className="mb-2 mt-5 h-14 w-60 rounded border-white bg-gray-200/10 text-lg text-white sm:w-72 md:w-96 "
                         placeholder="Email or mobile number"
                       />
                     </FormControl>
@@ -96,17 +96,17 @@ const EmailInput = () => {
               <Button
                 type="button"
                 disabled={isPending}
-                className="sm:h-[60px] sm:w-48 w-40 h-10 text-lg flex sm:text-2xl bg-[#CC0000] hover:bg-[#990000] text-white mx-2 mt-2 sm:mt-[18px]"
+                className="mx-2 mt-2 flex h-10 w-40 bg-[#CC0000] text-lg text-white hover:bg-[#990000] sm:mt-[18px] sm:h-[60px] sm:w-48 sm:text-2xl"
               >
                 <Loader />
               </Button>
             ) : (
               <Button
-                  type="submit"
-                  disabled={isPending}
-                className="sm:h-[60px] sm:w-48 w-40 h-10 text-lg flex sm:text-2xl bg-[#CC0000] hover:bg-[#990000] text-white mx-2 mt-2 sm:mt-[18px]"
+                type="submit"
+                disabled={isPending}
+                className="mx-2 mt-2 flex h-10 w-40 bg-[#CC0000] text-lg text-white hover:bg-[#990000] sm:mt-[18px] sm:h-[60px] sm:w-48 sm:text-2xl"
               >
-                Get Started <ChevronRight className="mt-0.5 sm:mt-1 ml-1" />
+                Get Started <ChevronRight className="ml-1 mt-0.5 sm:mt-1" />
               </Button>
             )}
           </div>

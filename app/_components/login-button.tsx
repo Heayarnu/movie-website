@@ -3,11 +3,7 @@
 import { LoginButtonProps } from '@/types/index';
 import { useRouter } from 'next/navigation';
 
-const LoginButton = ({
-  children,
-  mode = 'redirect',
-  asChild,
-}: LoginButtonProps) => {
+const LoginButton = ({ children }: LoginButtonProps) => {
   const router = useRouter();
   const onClick = () => {
     router.push('/SignIn');

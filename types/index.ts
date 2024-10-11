@@ -21,6 +21,9 @@ export interface NavBarProps {
   showBackground: boolean;
   isHome: boolean;
   profile: Profile;
+  profiles: Profile[];
+  setProfiles: React.Dispatch<React.SetStateAction<Profile[]>>;
+  isLoading: boolean;
 }
 
 // Props for a movie carousel component
@@ -122,12 +125,4 @@ export interface Movie {
   video?: boolean;
   vote_average?: number;
   vote_count?: number;
-}
-
-// Type for search results
-export interface SearchResults {
-  page: number;
-  results: Movie[];
-  total_pages: number;
-  total_results: number;
 }

@@ -9,12 +9,14 @@ const FormError = ({ message }: FormErrorProps) => {
 
   const colorClass =
     pathname === '/'
-      ? 'bg-ransparent text-red-500 justify-center -mt-10'
-      : 'bg-yellow-600 text-black gap-x-2';
+      ? 'bg-transparent text-red-500 justify-center -mt-10'
+      : pathname === '/MyAccount'
+        ? 'bg-red-200 text-red-500 gap-x-2 mt-5'
+        : 'bg-yellow-600 text-black gap-x-2';
 
   return (
     <div
-      className={`mb-12 p-3 rounded-md flex items-center  text-base ${colorClass}`}
+      className={`mb-12 flex items-center rounded-md p-3  text-base ${colorClass}`}
     >
       <p>{message}</p>
     </div>

@@ -1,5 +1,5 @@
 import MoviesCarousel from '@/components/MoviesCarousel';
-import { getLikedMovies } from '@/utils';
+import { getMyList, getPopularMovies } from '@/utils';
 import { cookies } from 'next/headers';
 
 export default async function MyListPage() {
@@ -9,24 +9,33 @@ export default async function MyListPage() {
 
   // Fetch liked movies using the utility function
   const likedMovies = selectedProfileId
-    ? await getLikedMovies(selectedProfileId)
+    ? await getMyList(selectedProfileId)
     : [];
 
-  return (
-    <div className="relative mx-auto pt-20">
-      <div className="flex flex-col">
-        <h1 className="ml-5 px-4 font-mono text-2xl font-semibold md:ml-10 md:text-5xl xl:px-10 ">
-          Favourite movies
-        </h1>
+  const popularMovies = await getPopularMovies();
 
-        {/* Always display the MoviesCarousel, even if there are no liked movies */}
+  return (
+    <div className="pt-20 sm:pt-24 md:pt-32 lg:pt-28">
+      <div className="flex flex-col items-center justify-center">
+        {likedMovies.length !== 0 && (
+          <h1 className="w-full px-4 text-left font-mono text-2xl font-semibold sm:text-3xl md:text-5xl">
+            Favourite movies
+          </h1>
+        )}
+
         <MoviesCarousel movies={likedMovies} isVertical />
 
-        {/* Show message when no movies are in the list */}
         {likedMovies.length === 0 && (
-          <p className="text-center text-lg text-gray-500">
-            You haven&apos;t added any movies to your list yet.
-          </p>
+          <div>
+            <p className="-mt-5 w-full px-4 text-left text-lg text-gray-500 sm:text-xl xl:-mt-10">
+              You haven&apos;t added any movie to your list yet.
+            </p>
+
+            <h2 className="xl:text:5xl mt-4 px-4 text-xl font-bold md:text-3xl">
+              Recommended movies
+            </h2>
+            <MoviesCarousel movies={popularMovies} />
+          </div>
         )}
       </div>
     </div>

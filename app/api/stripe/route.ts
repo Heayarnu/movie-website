@@ -5,28 +5,26 @@ import { stripe } from '@/lib/stripe';
 import { absoluteUrl } from '@/lib/utils';
 import { NextResponse } from 'next/server';
 
-const settingsUrl = absoluteUrl('/SignIn');
+const settingsUrl = absoluteUrl(
+  '/SignUp/planform?session_id={CHECKOUT_SESSION_ID}',
+);
+
 const failureUrl = absoluteUrl('/SignUp/planform');
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Methods': 'GET,POST, PUT, DELETE, OPTIONS,',
-  'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+  'Access-Control-Allow-Methods': 'GET,POST,PUT,DELETE,OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type,Authorization',
 };
 
 export async function OPTIONS() {
-  return NextResponse.json(
-    {},
-    {
-      headers: corsHeaders,
-    },
-  );
+  return NextResponse.json({}, { headers: corsHeaders });
 }
 
+// Create a new subscription
 export async function POST(req: Request) {
   try {
-    const { planName, price } = await req.json();
-
+    const { planName, price, videoQuality, price_id } = await req.json();
     const user = await currentUser();
     const userId = user?.id;
 
@@ -35,9 +33,7 @@ export async function POST(req: Request) {
     }
 
     const userSubscription = await db.userSubscription.findUnique({
-      where: {
-        userId,
-      },
+      where: { userId },
     });
 
     if (userSubscription && userSubscription.stripeCustomerId) {
@@ -45,7 +41,6 @@ export async function POST(req: Request) {
         customer: userSubscription.stripeCustomerId,
         return_url: settingsUrl,
       });
-
       return new NextResponse(JSON.stringify({ url: stripeSession.url }));
     }
 
@@ -58,22 +53,11 @@ export async function POST(req: Request) {
       customer_email: email,
       line_items: [
         {
-          price_data: {
-            currency: 'USD',
-            product_data: {
-              name: `Subscribe to Netflix ${planName} plan.`,
-            },
-            unit_amount: price * 100,
-            recurring: {
-              interval: 'month',
-            },
-          },
+          price: price_id,
           quantity: 1,
         },
       ],
-      metadata: {
-        userId,
-      },
+      metadata: { userId, videoQuality, planName, price },
     });
 
     return new NextResponse(JSON.stringify({ url: stripeSession.url }));

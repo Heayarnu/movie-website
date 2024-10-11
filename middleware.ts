@@ -46,7 +46,7 @@ export default auth(async (req) => {
 
   /// Redirect logic for user authentication and subscription status
   if (isLoggedIn) {
-    if (isAuthRoute) {
+    if (isAuthRoute || isPublicRoute) {
       if (isSubscribed) {
         return Response.redirect(new URL(DEFAULT_LOGIN_REDIRECT, nextUrl));
       }

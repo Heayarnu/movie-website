@@ -16,9 +16,14 @@ const formSchema = z.object({
 interface SearchInputProps {
   showSearch: boolean;
   setShowSearch: (show: boolean) => void;
+  setIsSheetOpen: (show: boolean) => void;
 }
 
-const SearchInput = ({ showSearch, setShowSearch }: SearchInputProps) => {
+const SearchInput = ({
+  showSearch,
+  setShowSearch,
+  setIsSheetOpen,
+}: SearchInputProps) => {
   const router = useRouter();
 
   const inputRef = useRef<HTMLInputElement>(null);
@@ -41,6 +46,7 @@ const SearchInput = ({ showSearch, setShowSearch }: SearchInputProps) => {
     router.push(`/search/${values.input}`);
     form.reset();
     setShowSearch(false);
+    setIsSheetOpen(false);
   }
 
   return (
@@ -59,7 +65,7 @@ const SearchInput = ({ showSearch, setShowSearch }: SearchInputProps) => {
                   placeholder="Search..."
                   {...field}
                   ref={inputRef}
-                  className=" mx-0 mb-2 h-14 w-screen rounded-none border-none bg-stone-100 pl-12 text-xl text-black placeholder:text-stone-400 focus:border-none focus-visible:ring-0 focus-visible:ring-offset-0 dark:bg-stone-500 dark:text-white md:pr-10 "
+                  className=" mx-0 mb-2 h-14 w-screen max-w-[95vw] rounded-3xl border-none bg-stone-100 pl-12 text-xl text-black placeholder:text-stone-400 focus:border-none focus-visible:ring-0 focus-visible:ring-offset-0 dark:bg-stone-500 dark:text-white md:pr-10 xl:w-96 xl:pl-5"
                 />
               </FormControl>
             </FormItem>
@@ -68,7 +74,7 @@ const SearchInput = ({ showSearch, setShowSearch }: SearchInputProps) => {
         <Button
           type="submit"
           variant="ghost"
-          className="absolute left-0 top-0 mt-[10px]  hover:scale-125 hover:bg-transparent"
+          className="absolute left-0 top-0 mt-[10px]  hover:scale-125 hover:bg-transparent xl:hidden"
         >
           <FontAwesomeIcon
             icon={faMagnifyingGlass}

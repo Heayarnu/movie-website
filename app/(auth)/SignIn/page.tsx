@@ -12,7 +12,13 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { Form, FormControl, FormField, FormItem } from '@/components/ui/form';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
+} from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Image from 'next/image';
@@ -94,6 +100,7 @@ const Page = () => {
                               placeholder="Email or mobile number"
                             />
                           </FormControl>
+                          <FormMessage />
                         </FormItem>
                       )}
                     />
@@ -112,6 +119,7 @@ const Page = () => {
                               type="password"
                             />
                           </FormControl>
+                          <FormMessage />
                         </FormItem>
                       )}
                     />

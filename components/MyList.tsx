@@ -1,42 +1,60 @@
 'use client';
 
+// Global cache for all instances
+const globalCache = new Map();
+
 import { Movie } from '@/types/index';
 import { faCheck, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { usePathname } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { Profile } from '@prisma/client';
+import { usePathname, useRouter } from 'next/navigation';
+import { useCallback, useEffect, useState } from 'react';
 import { Button } from './ui/button';
 
 interface MyListProps {
   movie: Movie;
-  selectedProfile: any; // Specify the expected type for selectedProfile
+  selectedProfile: any;
 }
 
 const MyList = ({ movie, selectedProfile }: MyListProps) => {
-  const [isLiked, setIsLiked] = useState<boolean>(false); // State to track if the movie is liked
+  const [isLiked, setIsLiked] = useState<boolean>(false);
   const profileId = selectedProfile.id;
 
-  // Effect to check if the movie is already liked when the component mounts
-  useEffect(() => {
-    const fetchLikedMovies = async () => {
-      try {
-        const response = await fetch(
-          `/api/mylist?profileId=${profileId}&movieId=${movie.id}`,
-        );
+  const fetchLikedMovies = useCallback(async () => {
+    const cacheKey = `${profileId}-${movie.id}`;
 
-        if (!response.ok) throw new Error('Failed to fetch liked status');
+    // Check global cache
+    if (globalCache.has(cacheKey)) {
+      setIsLiked(globalCache.get(cacheKey));
+      return;
+    }
 
-        const data = await response.json();
-        setIsLiked(data.isLiked); // Set the liked status based on response
-      } catch (error) {
-        console.error('Error fetching liked status:', error);
-      }
-    };
+    try {
+      const response = await fetch(
+        `/api/mylist?profileId=${profileId}&movieId=${movie.id}`,
+      );
+      if (!response.ok) throw new Error('Failed to fetch liked status');
 
-    fetchLikedMovies();
+      const data = await response.json();
+      globalCache.set(cacheKey, data.isLiked);
+      setIsLiked(data.isLiked);
+    } catch (error) {
+      console.error('Error fetching liked status:', error);
+    }
   }, [profileId, movie.id]);
 
+  useEffect(() => {
+    fetchLikedMovies();
+  }, [fetchLikedMovies]);
+
+  const router = useRouter();
+
   const toggleMyList = async () => {
+    const cacheKey = `${profileId}-${movie.id}`;
+
+    // Optimistically toggle the like state
+    setIsLiked((prev) => !prev);
+
     try {
       const response = await fetch('/api/mylist', {
         method: 'POST',
@@ -45,20 +63,23 @@ const MyList = ({ movie, selectedProfile }: MyListProps) => {
         },
         body: JSON.stringify({
           profileId,
-          movie, // Full movie object
+          movie,
         }),
       });
 
       const data = await response.json();
 
       if (response.ok) {
-        // Toggle the liked state
-        setIsLiked((prev) => !prev);
-        console.log(`Movie ${isLiked ? 'removed from' : 'added to'} My List.`);
+        globalCache.set(cacheKey, !isLiked);
+        router.refresh();
+        // Update global cache with the new state
       } else {
+        // Revert the optimistic update on error
+        setIsLiked((prev) => !prev);
         console.error('Error:', data.error);
       }
     } catch (error) {
+      setIsLiked((prev) => !prev); // Revert optimistic update on failure
       console.error('Error toggling movie:', error);
     }
   };
