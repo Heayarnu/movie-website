@@ -66,5 +66,4 @@ export default auth(async (req) => {
 
 export const config = {
   matcher: ['/((?!.+\\.[\\w]+$|_next).*)', '/', '/(api|trpc)(.*)'],
-  runtime: 'nodejs', // Add this line to set the runtime to Node.js
 };
