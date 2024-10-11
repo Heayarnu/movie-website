@@ -19,12 +19,13 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Check, CheckCircle2Icon } from 'lucide-react';
 import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import { useState, useTransition } from 'react';
+import { useEffect, useState, useTransition } from 'react';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 
 const Page = () => {
   const router = useRouter();
+  const email = useAppSelector((state) => state.email.value);
 
   const form = useForm<z.infer<typeof PasswordSchema>>({
     resolver: zodResolver(PasswordSchema),
@@ -34,14 +35,9 @@ const Page = () => {
   });
 
   const [isPending, startTransition] = useTransition();
-
   const [loading, setLoading] = useState(false);
-
-  const email = useAppSelector((state) => state.email.value);
-
   const [error, setError] = useState<string | undefined>('');
   const [success, setSuccess] = useState<string | undefined>('');
-
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
 
   const onSubmit = (passwordInput: z.infer<typeof PasswordSchema>) => {
@@ -50,33 +46,35 @@ const Page = () => {
     setLoading(true);
 
     startTransition(() => {
-      register(email, passwordInput).then((data) => {
-        setError(data.error);
-        setSuccess(data.success);
+      register(email, passwordInput)
+        .then((data) => {
+          setError(data.error);
+          setSuccess(data.success);
 
-        // If registration is successful, sign in the user
-        if (!data.error) {
-          signIn('credentials', {
-            email: email,
-            password: passwordInput.password,
-            redirect: false,
-          });
-        }
-      });
-
-      setLoading(false);
-      setIsSubmitted(true);
+          // If registration is successful, sign in the user
+          if (!data.error) {
+            signIn('credentials', {
+              email: email,
+              password: passwordInput.password,
+              redirect: false,
+            });
+          }
+        })
+        .finally(() => {
+          setLoading(false);
+          setIsSubmitted(true);
+        });
     });
   };
 
-  const handleClick = () => {
-    setLoading(true);
-    router.push('/SignUp/planform');
-  };
+  // Use useEffect to handle redirection
+  useEffect(() => {
+    if (!email) {
+      router.push('/');
+    }
+  }, [email, router]);
 
-  return !email ? (
-    router.push('/')
-  ) : (
+  return (
     <div className="h-screen bg-white">
       <div className="mx-auto h-full w-full sm:mt-5 sm:w-[470px]">
         <Card className="flex flex-col justify-center border-none bg-transparent px-4 sm:p-7">
@@ -160,22 +158,16 @@ const Page = () => {
                 </Form>
               </div>
             ) : (
-              <div
-                className="max-w-80 space-y-3 text-xl
-              "
-              >
+              <div className="max-w-80 space-y-3 text-xl">
                 <p className="flex">
-                  {' '}
                   <Check className="mr-2 mt-1 h-10 w-8 text-[#CC0000]" /> No
                   commitments, cancel at any time.
                 </p>
                 <p className="flex">
-                  {' '}
                   <Check className="mr-2 mt-1 h-10 w-8 text-[#CC0000]" />
                   Everything on Netflix for one low price.
                 </p>
                 <p className="flex">
-                  {' '}
                   <Check className="mr-2 mt-2 h-10 w-8 text-[#CC0000]" />
                   No adverts and no extra fees. Ever.
                 </p>
