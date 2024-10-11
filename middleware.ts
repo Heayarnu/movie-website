@@ -44,7 +44,7 @@ export default auth(async (req) => {
     return;
   }
 
-  /// Redirect logic for user authentication and subscription status
+  // Redirect logic for user authentication and subscription status
   if (isLoggedIn) {
     if (isAuthRoute || isPublicRoute) {
       if (isSubscribed) {
@@ -66,4 +66,5 @@ export default auth(async (req) => {
 
 export const config = {
   matcher: ['/((?!.+\\.[\\w]+$|_next).*)', '/', '/(api|trpc)(.*)'],
+  runtime: 'nodejs', // Add this line to set the runtime to Node.js
 };
