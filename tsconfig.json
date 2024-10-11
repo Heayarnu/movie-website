@@ -3,7 +3,7 @@
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,
-    "strict": true,
+    "strict": false,
     "noEmit": true,
     "esModuleInterop": true,
     "module": "esnext",
@@ -29,7 +29,8 @@
     "Redux/reduxProvider.jsx",
     "Redux/emailReducer.tsx",
     "Redux/store.tsx",
-    "app/(auth)/SignUp/page.tsx"
-, "app/(protected)/page.tsx"  ],
+    "app/(auth)/SignUp/page.tsx",
+    "app/(protected)/page.tsx"
+  ],
   "exclude": ["node_modules"]
 }

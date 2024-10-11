@@ -1,17 +1,10 @@
-import { DefaultUser } from 'next-auth';
+import 'next-auth';
 
 declare module 'next-auth' {
-  interface session {
-    user?: DefaultUser & {
+  interface Session {
+    user: {
       id: string;
-      stripeCustomerId: string;
-      isActive: boolean;
-      subscription: string;
+      email: string;
     };
-  }
-    interface User extends DefaultUser {
-        stripeCustomerId: string;
-        isActive: boolean;
-        subscription: string;
   }
 }
