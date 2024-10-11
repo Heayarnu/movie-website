@@ -20,6 +20,7 @@ import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import FormError from './form-error';
 
+// email inpur component
 const EmailInput = () => {
   const router = useRouter();
   const form = useForm<z.infer<typeof EmailSchema>>({
