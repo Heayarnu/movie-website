@@ -2,7 +2,7 @@
 import { db } from '@/lib/db';
 import { stripe } from '@/lib/stripe';
 import { NextResponse } from 'next/server';
-import { Stripe } from 'stripe';
+import Stripe from 'stripe';
 
 const getStripeEvent = async (req: Request) => {
   const body = await req.text();
