@@ -5,7 +5,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { UserSubscription } from '@prisma/client';
 import axios from 'axios';
 import { CheckCircle2 } from 'lucide-react';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 
 interface PlanSelectorProps {
@@ -170,9 +170,6 @@ const PlanSelector = ({ activePlan, setIsChangingPlan }: PlanSelectorProps) => {
 
       // Redirect to the Stripe Checkout URL
       window.location.href = stripeResponse.data.url;
-      window.addEventListener('load', () => {
-        router.refresh();
-      });
     } catch (error) {
       console.error('STRIPE_CLIENT_ERROR', error);
     } finally {
@@ -181,14 +178,6 @@ const PlanSelector = ({ activePlan, setIsChangingPlan }: PlanSelectorProps) => {
   };
 
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const session_id = searchParams.get('session_id');
-
-  useEffect(() => {
-    if (session_id) {
-      window.location.reload();
-    }
-  }, [session_id]);
 
   const onUpgrade = async () => {
     setLoading(true);
